@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C2514F028041408004A9D05 /* selectFromAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2514EF28041408004A9D05 /* selectFromAlbum.swift */; };
 		4C5F4A50280270D00031B269 /* pickPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5F4A4F280270D00031B269 /* pickPhoto.swift */; };
 		4C5F4A5228027A5D0031B269 /* stopReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5F4A5128027A5D0031B269 /* stopReason.swift */; };
 		4CCA3D732801BA4100D11C89 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCA3D722801BA4100D11C89 /* AppDelegate.swift */; };
@@ -40,6 +41,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4C2514EF28041408004A9D05 /* selectFromAlbum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = selectFromAlbum.swift; sourceTree = "<group>"; };
 		4C5F4A4F280270D00031B269 /* pickPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pickPhoto.swift; sourceTree = "<group>"; };
 		4C5F4A5128027A5D0031B269 /* stopReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = stopReason.swift; sourceTree = "<group>"; };
 		4CCA3D6F2801BA4100D11C89 /* photoPicker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = photoPicker.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -143,6 +145,7 @@
 				4CCA3DA62801BB4200D11C89 /* crop.swift */,
 				4C5F4A4F280270D00031B269 /* pickPhoto.swift */,
 				4C5F4A5128027A5D0031B269 /* stopReason.swift */,
+				4C2514EF28041408004A9D05 /* selectFromAlbum.swift */,
 			);
 			path = PhotoPicker;
 			sourceTree = "<group>";
@@ -283,6 +286,7 @@
 				4CCA3D772801BA4100D11C89 /* ViewController.swift in Sources */,
 				4CCA3D732801BA4100D11C89 /* AppDelegate.swift in Sources */,
 				4CCA3D752801BA4100D11C89 /* SceneDelegate.swift in Sources */,
+				4C2514F028041408004A9D05 /* selectFromAlbum.swift in Sources */,
 				4C5F4A5228027A5D0031B269 /* stopReason.swift in Sources */,
 				4C5F4A50280270D00031B269 /* pickPhoto.swift in Sources */,
 			);
