@@ -19,7 +19,7 @@ class CropViewController: UIViewController {
     override func viewDidLoad() {
         self.view.backgroundColor = color1
     }
-    func setUp(image:UIImage){
+    func setUp(image:UIImage) {
         self.image=image;
         self.view.addSubview(cropRectView)
         
@@ -53,7 +53,7 @@ class CropViewController: UIViewController {
         }
     }
     
-    func setUpButton(){
+    func setUpButton() {
         let cancelButton=UIButton(frame: CGRect(x: 50, y: self.view.frame.height-100, width: 100, height: 50))
         cancelButton.setTitle("取消", for: .normal)
         cancelButton.setTitleColor(.black, for: .normal)
@@ -64,18 +64,17 @@ class CropViewController: UIViewController {
         doneButton.setTitleColor(.black, for: .normal)
         doneButton.addTarget(self, action: #selector(done), for: .touchUpInside)
     }
-    @objc func cancel(){
+    @objc func cancel() {
          self.dismiss(animated: true, completion: nil)
         //回传信息
     }
-    @objc func done(){
+    @objc func done() {
         cropImage()
-        
         //回传裁剪后的照片
     }
     
     //画边框
-    func drawBorderLayer(){
+    func drawBorderLayer() {
         let borderLayer =  CAShapeLayer()
                 borderLayer.bounds = cropRectView.bounds
                 
@@ -90,7 +89,7 @@ class CropViewController: UIViewController {
                 
        
     }
-    func cropImage(){
+    func cropImage() {
         let cgImage=image.cgImage!
         let rect:CGRect=cropRectView.frame
         let newImage = cgImage.cropping(to: rect)!
@@ -99,7 +98,8 @@ class CropViewController: UIViewController {
     }
     
 }
-extension CropViewController:UIScrollViewDelegate{
+
+extension CropViewController:UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }

@@ -10,18 +10,19 @@ import UIKit
 class SelectViewController: UIViewController {
     var photosView=UICollectionView()
     override func viewDidLoad() {
-        <#code#>
-    }
-    
-}
-extension SelectViewController: UICollectionViewDelegate,UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        <#code#>
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        <#code#>
+        //
     }
     
     
 }
+//extension SelectViewController: UICollectionViewDelegate,UICollectionViewDataSource {
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        //
+//    }
+//    
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        //
+//    }
+//    
+//    
+//}

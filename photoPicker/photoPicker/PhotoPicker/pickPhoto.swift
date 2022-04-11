@@ -7,8 +7,8 @@
 
 import Foundation
 import UIKit
-class ChooseWayController: UIViewController{
-    var stopReason:StopReason?
+class ChooseWayController: UIViewController {
+    var stopReason: StopReason?
     var imageView=UIImageView()
     var firstTime: Bool=true
     let imagePickercontroller = UIImagePickerController()
@@ -17,7 +17,7 @@ class ChooseWayController: UIViewController{
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if firstTime{
+        if firstTime {
             firstTime=false
             showActionSheet()
         }
@@ -59,8 +59,9 @@ class ChooseWayController: UIViewController{
     
     func selectFromAlbum() {
         //print("selectFromAlbum")
-        
     }
+        
+    
     
 }
 extension ChooseWayController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -70,7 +71,7 @@ extension ChooseWayController: UIImagePickerControllerDelegate, UINavigationCont
             }
      func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
          imageView=UIImageView(frame: CGRect(x: 0, y: 20, width: self.view.frame.width, height: self.view.frame.height))
-        self.view.addSubview(imageView)
+       // self.view.addSubview(imageView)
         imageView.image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
          self.imagePickercontroller.dismiss(animated: true, completion: nil)
      }
