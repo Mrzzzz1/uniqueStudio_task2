@@ -11,3 +11,6 @@
 
 ## 4.12
 昨天写了裁剪部分没有调试。。。今天发现了无数个bug,特别是自动布局和绝对布局的混用导致了很多bug，应该更加深入的学习他们的关系。还有cgimage.cropping(),原本以为rect是相对于view而言，结果是相对于image。经过测试发现scrollview缩放时subview.frame不变image.size不变，而scrollview的contentSize和contentOffset会变。最终找到了坐标关系。裁剪后image会旋转的问题在简书上找到了解决办法
+
+## 4.13
+今天课比较多，只实现了图库授权和从图库中获取照片的一小部分。

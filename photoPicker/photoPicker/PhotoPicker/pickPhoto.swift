@@ -60,20 +60,23 @@ class ChooseWayController: UIViewController {
     //用于crop Debug...
     func selectFromAlbum() {
         //print("selectFromAlbum")
-        imagePickercontroller.delegate = self
-        imagePickercontroller.allowsEditing = true
-        if !UIImagePickerController.isSourceTypeAvailable(.photoLibrary){
-            stopReason = .noCamera
-            let errorAlert = UIAlertController(title:"相册不可用", message: .none, preferredStyle: .alert)
-            let cancelAction=UIAlertAction(title: "取消", style: .cancel, handler: {
-                _ in self.dismiss(animated: true, completion: nil)
-            })
-            errorAlert.addAction(cancelAction)
-            self.present(errorAlert, animated: true, completion: nil)
-            return
-        }
-        imagePickercontroller.sourceType = .photoLibrary
-        self.present(imagePickercontroller, animated: true, completion: nil)
+//        imagePickercontroller.delegate = self
+//        imagePickercontroller.allowsEditing = true
+//        if !UIImagePickerController.isSourceTypeAvailable(.photoLibrary){
+//            stopReason = .noCamera
+//            let errorAlert = UIAlertController(title:"相册不可用", message: .none, preferredStyle: .alert)
+//            let cancelAction=UIAlertAction(title: "取消", style: .cancel, handler: {
+//                _ in self.dismiss(animated: true, completion: nil)
+//            })
+//            errorAlert.addAction(cancelAction)
+//            self.present(errorAlert, animated: true, completion: nil)
+//            return
+//        }
+//        imagePickercontroller.sourceType = .photoLibrary
+//        self.present(imagePickercontroller, animated: true, completion: nil)
+        let selectViewController = SelectViewController()
+        present(selectViewController, animated: true, completion: nil)
+        
     }
     //
         
