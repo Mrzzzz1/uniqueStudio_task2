@@ -11,6 +11,7 @@ import Foundation
 import UIKit
 class SelectViewController: UIViewController {
     //var photosView=UICollectionView()
+    var titleLabel: UILabel!
     var selectedImage: [UIImage]?
     var flags: [Int] = [-1]
     var stopReason: StopReason?
@@ -21,7 +22,9 @@ class SelectViewController: UIViewController {
     override func viewDidLoad() {
         getPermission()
         getphotos()
-        //setUpCollectionView()
+        setUpCollectionView()
+        setUpLabel()
+        setUpButton()
     }
         //获取相册权限
     func getPermission() {
@@ -52,7 +55,6 @@ class SelectViewController: UIViewController {
         // 设定排序规则
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
          allAssets = PHAsset.fetchAssets(with: fetchOptions)
-        setUpCollectionView()
     }
     func setUpCollectionView() {
         let layout = UICollectionViewFlowLayout()
@@ -60,15 +62,28 @@ class SelectViewController: UIViewController {
         layout.itemSize = CGSize(width: self.view.frame.width/3.2, height: self.view.frame.width/3)
         collectionView = UICollectionView(frame:CGRect(x: 0, y: 60, width: self.view.frame.width, height: self.view.frame.height), collectionViewLayout: layout)
         self.view.addSubview(collectionView)
-//        collectionView.translatesAutoresizingMaskIntoConstraints=false
-//        collectionView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 100).isActive = true
-//        collectionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-//        collectionView.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
-//        collectionView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive=true
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: "itemed")
     }
+    func setUpLabel() {
+        titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 60))
+        titleLabel.text = "最近图片>"
+        titleLabel.textColor = .black
+        titleLabel.textAlignment = .center
+        titleLabel.backgroundColor = .white
+        titleLabel.font = UIFont.systemFont(ofSize: 20)
+        self.view.addSubview(titleLabel)
+    }
+    func setUpButton() {
+        let button = UIButton(frame: titleLabel.frame)
+        self.view.addSubview(button)
+        button.addTarget(self, action: #selector(clickButton), for: .touchUpInside)
+    }
+    @objc func clickButton(){
+        debugPrint("点击按钮")
+    }
+    
     
     
 }
