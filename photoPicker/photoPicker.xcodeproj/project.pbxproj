@@ -21,6 +21,7 @@
 		4CCA3D972801BA4400D11C89 /* photoPickerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCA3D962801BA4400D11C89 /* photoPickerUITests.swift */; };
 		4CCA3D992801BA4400D11C89 /* photoPickerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCA3D982801BA4400D11C89 /* photoPickerUITestsLaunchTests.swift */; };
 		4CCA3DA72801BB4200D11C89 /* crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCA3DA62801BB4200D11C89 /* crop.swift */; };
+		4CD5BAB02807FF22003440E7 /* collectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD5BAAF2807FF22003440E7 /* collectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		4CCA3D962801BA4400D11C89 /* photoPickerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = photoPickerUITests.swift; sourceTree = "<group>"; };
 		4CCA3D982801BA4400D11C89 /* photoPickerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = photoPickerUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		4CCA3DA62801BB4200D11C89 /* crop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = crop.swift; sourceTree = "<group>"; };
+		4CD5BAAF2807FF22003440E7 /* collectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = collectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +145,7 @@
 			isa = PBXGroup;
 			children = (
 				4CCA3DA62801BB4200D11C89 /* crop.swift */,
+				4CD5BAAF2807FF22003440E7 /* collectionViewCell.swift */,
 				4C5F4A4F280270D00031B269 /* pickPhoto.swift */,
 				4C5F4A5128027A5D0031B269 /* stopReason.swift */,
 				4C2514EF28041408004A9D05 /* selectFromAlbum.swift */,
@@ -288,6 +291,7 @@
 				4CCA3D752801BA4100D11C89 /* SceneDelegate.swift in Sources */,
 				4C2514F028041408004A9D05 /* selectFromAlbum.swift in Sources */,
 				4C5F4A5228027A5D0031B269 /* stopReason.swift in Sources */,
+				4CD5BAB02807FF22003440E7 /* collectionViewCell.swift in Sources */,
 				4C5F4A50280270D00031B269 /* pickPhoto.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -467,6 +471,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YSTAQW8MCV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = photoPicker/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -474,6 +479,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -494,6 +500,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YSTAQW8MCV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = photoPicker/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -501,6 +508,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

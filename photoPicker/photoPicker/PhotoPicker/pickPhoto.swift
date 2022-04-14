@@ -79,9 +79,6 @@ class ChooseWayController: UIViewController {
         
     }
     //
-        
-    
-    
 }
 extension ChooseWayController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -96,6 +93,4 @@ extension ChooseWayController: UIImagePickerControllerDelegate, UINavigationCont
          cropViewController.setUp(image: self.imageView.image!)
          present(cropViewController, animated: true, completion: nil)
      }
-    
-    
 }
