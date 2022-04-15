@@ -11,7 +11,7 @@ enum StopReason {
     case cancelWhileTakePhotos//用户在拍照时取消
     case cancelWhileChoosePhoto//用户在选择照片时取消
     case noCamera//未取得相机权限
-    case cancelCrop//用户在裁剪时取消
     case noAlbum//没有相册权限
+    case chooseNoPhoto//用户在没有选择照片时点击确认
     
 }

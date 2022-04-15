@@ -4,22 +4,27 @@
 //
 //  Created by 张金涛 on 2022/4/11.
 //
-
 import PhotosUI
 //import Photos
 import Foundation
 import UIKit
 class SelectViewController: UIViewController {
+    var moreButton: UIButton!
+    var backClosureforSuccess: (([UIImage])->Void)?
+    var backClosureForFail: ((StopReason)->Void)?
     //var photosView=UICollectionView()
+    var success: Int! = 0
+    var newImage: UIImage?
     var titleLabel: UILabel!
-    var selectedImage: [UIImage]?
-    var flags: [Int] = [-1]
+    var selectedImage: [UIImage]=[]
+    var flags: [Int] = []
     var stopReason: StopReason?
     var collectionView: UICollectionView!
     var indexNow=0
     var topLevelUserCollections = PHFetchResult<PHCollection>()
     var allAssets=PHFetchResult<PHAsset>()
     override func viewDidLoad() {
+        PHPhotoLibrary.shared().register(self)
         getPermission()
         getphotos()
         setUpCollectionView()
@@ -28,8 +33,6 @@ class SelectViewController: UIViewController {
     }
         //获取相册权限
     func getPermission() {
-//        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
-//        debugPrint(status)
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
             DispatchQueue.main.async {
                 let sta: PHAuthorizationStatus = status as PHAuthorizationStatus
@@ -39,17 +42,18 @@ class SelectViewController: UIViewController {
                 case .authorized:
                     print("全部")
                 default:
-                    self.stopReason = .noAlbum
+                    self.backClosureForFail?(StopReason.noAlbum)
+                    self.dismiss(animated: true, completion: nil)
                 }
             }
         }
     }
     //添加更多选中照片
-    func getMorePhotos() {
+  @objc  func getMorePhotos() {
         PHPhotoLibrary.shared().presentLimitedLibraryPicker(from: self)
     }
     func getphotos() {
-         topLevelUserCollections=PHAssetCollection.fetchTopLevelUserCollections(with: nil)
+        topLevelUserCollections=PHAssetCollection.fetchTopLevelUserCollections(with: nil)
         print("topLevelUserCollectionsCount\(topLevelUserCollections.count)")
         let fetchOptions = PHFetchOptions()
         // 设定排序规则
@@ -75,21 +79,57 @@ class SelectViewController: UIViewController {
         titleLabel.font = UIFont.systemFont(ofSize: 20)
         self.view.addSubview(titleLabel)
     }
+    
     func setUpButton() {
+        //切换相册
         let button = UIButton(frame: titleLabel.frame)
         self.view.addSubview(button)
         button.addTarget(self, action: #selector(clickButton), for: .touchUpInside)
+        //从相册选择更多照片
+         moreButton=UIButton(frame: CGRect(x: self.view.frame.width-100, y: 0, width: 100, height: 60))
+        self.view.addSubview(moreButton)
+        moreButton.setTitle("更多图片", for: .normal)
+        moreButton.setTitleColor(.black, for: .normal)
+        moreButton.addTarget(self, action: #selector(getMorePhotos), for: .touchUpInside)
+        if PHPhotoLibrary.authorizationStatus(for: .readWrite) == .authorized {
+            moreButton.isHidden=true
+        }
+        //取消
+        let cancelButton = UIButton(frame: CGRect(x: 50, y: self.view.frame.height-100, width: 100, height: 50))
+        cancelButton.setTitle("取消", for: .normal)
+        cancelButton.setTitleColor(.white, for: .normal)
+        cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
+        self.view.addSubview(cancelButton)
+        //确认
+        let doneButton = UIButton(frame: CGRect(x: self.view.frame.width-150, y: self.view.frame.height-100, width: 100, height: 50))
+        doneButton.setTitle("确认", for: .normal)
+        doneButton.setTitleColor(.white, for: .normal)
+        doneButton.addTarget(self, action: #selector(done), for: .touchUpInside)
+        self.view.addSubview(doneButton)
+    }
+    @objc func cancel() {
+        backClosureForFail?(StopReason.cancelWhileChoosePhoto)
+         self.dismiss(animated: true, completion: nil)
+        
+    }
+    @objc func done() {
+        if selectedImage.isEmpty{
+            backClosureForFail?(StopReason.chooseNoPhoto)
+        } else {
+            backClosureforSuccess?(selectedImage)
+        }
+        self.dismiss(animated: true, completion: nil)
+       
     }
     @objc func clickButton(){
         debugPrint("点击按钮")
     }
-    
-    
-    
 }
+
+
 extension SelectViewController: UICollectionViewDelegate,UICollectionViewDataSource,CollectionViewCellDelegate {
     func addSelectedImage(image: UIImage, tag: Int) {
-        selectedImage?.append(image)
+        selectedImage.append(image)
         flags.append(tag)
         print("flags\(flags.count)")
         for i in 0..<flags.count{
@@ -100,7 +140,7 @@ extension SelectViewController: UICollectionViewDelegate,UICollectionViewDataSou
     func removeSelectedImage(tag: Int) {
         for i in 0..<flags.count{
             if flags[i]==tag{
-                selectedImage?.remove(at: i)
+                selectedImage.remove(at: i)
                 flags.remove(at: i)
                 break
             }
@@ -109,9 +149,19 @@ extension SelectViewController: UICollectionViewDelegate,UICollectionViewDataSou
     
     
     
-    func crop(image: UIImage) {
-        let cropViewController = CropViewController()
+    func crop(image: UIImage,index: Int) {
+        let indexPath=IndexPath(item: index, section: 0)
+        let cell = collectionView.cellForItem(at: indexPath) as!CollectionViewCell
+        let cropViewController=CropViewController()
         cropViewController.setUp(image: image)
+        cropViewController.backClosure1 = { (image:UIImage) in
+            self.newImage=image
+            cell.imageView.image=image
+            
+        }
+        cropViewController.backClosure2={ (success:Int) in
+            self.success=success
+        }
         self.present(cropViewController, animated: true, completion: nil)
         
         
@@ -134,7 +184,7 @@ extension SelectViewController: UICollectionViewDelegate,UICollectionViewDataSou
                     for: allAssets[indexPath.item],
                        targetSize:  PHImageManagerMaximumSize,
                        contentMode: .aspectFill,
-                    options: nil,
+                       options: nil,
                     resultHandler: { result, info in
                         cell.config(image: result!)
                         cell.delegate=self
@@ -158,4 +208,25 @@ extension SelectViewController: UICollectionViewDelegate,UICollectionViewDataSou
     }
 
 
+}
+extension SelectViewController: PHPhotoLibraryChangeObserver{
+    
+    // 当照片库发生变化的时候会触发
+    func photoLibraryDidChange(_ change: PHChange) {
+        print("change")
+        //获取照片
+        getphotos()
+        //更新UI
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+            self.selectedImage.removeAll()
+            self.flags.removeAll()
+            if PHPhotoLibrary.authorizationStatus(for: .readWrite) == .authorized {
+                self.moreButton.isHidden=true
+            } else {
+                self.moreButton.isHidden=false
+            }
+        }
+    }
+    
 }

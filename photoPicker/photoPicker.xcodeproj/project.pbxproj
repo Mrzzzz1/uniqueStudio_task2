@@ -144,11 +144,11 @@
 		4CCA3DA52801BA5700D11C89 /* PhotoPicker */ = {
 			isa = PBXGroup;
 			children = (
-				4CCA3DA62801BB4200D11C89 /* crop.swift */,
-				4CD5BAAF2807FF22003440E7 /* collectionViewCell.swift */,
 				4C5F4A4F280270D00031B269 /* pickPhoto.swift */,
-				4C5F4A5128027A5D0031B269 /* stopReason.swift */,
 				4C2514EF28041408004A9D05 /* selectFromAlbum.swift */,
+				4CD5BAAF2807FF22003440E7 /* collectionViewCell.swift */,
+				4CCA3DA62801BB4200D11C89 /* crop.swift */,
+				4C5F4A5128027A5D0031B269 /* stopReason.swift */,
 			);
 			path = PhotoPicker;
 			sourceTree = "<group>";

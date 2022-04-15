@@ -11,6 +11,7 @@ class ChooseWayController: UIViewController {
     var stopReason: StopReason?
     var imageView = UIImageView()
     var firstTime: Bool = true
+    var selectedImages: [UIImage]=[]
     let imagePickercontroller = UIImagePickerController()
     override func viewDidLoad() {
         self.view.backgroundColor = .white
@@ -39,8 +40,6 @@ class ChooseWayController: UIViewController {
         
     }
     func takePhoto() {
-        //print("takePhoto")
-        
         imagePickercontroller.delegate=self
         imagePickercontroller.allowsEditing = true
         if !UIImagePickerController.isSourceTypeAvailable(.camera){
@@ -57,28 +56,20 @@ class ChooseWayController: UIViewController {
         self.present(imagePickercontroller, animated: true, completion: nil)
     }
     
-    //用于crop Debug...
     func selectFromAlbum() {
-        //print("selectFromAlbum")
-//        imagePickercontroller.delegate = self
-//        imagePickercontroller.allowsEditing = true
-//        if !UIImagePickerController.isSourceTypeAvailable(.photoLibrary){
-//            stopReason = .noCamera
-//            let errorAlert = UIAlertController(title:"相册不可用", message: .none, preferredStyle: .alert)
-//            let cancelAction=UIAlertAction(title: "取消", style: .cancel, handler: {
-//                _ in self.dismiss(animated: true, completion: nil)
-//            })
-//            errorAlert.addAction(cancelAction)
-//            self.present(errorAlert, animated: true, completion: nil)
-//            return
-//        }
-//        imagePickercontroller.sourceType = .photoLibrary
-//        self.present(imagePickercontroller, animated: true, completion: nil)
         let selectViewController = SelectViewController()
+        selectViewController.backClosureforSuccess = { (images:[UIImage]) in
+            for i in 0..<images.count {
+                self.selectedImages.append(images[i])
+            
+        }
+        }
+        selectViewController.backClosureForFail = {
+            (reason:StopReason) in self.stopReason=reason
+        }
         present(selectViewController, animated: true, completion: nil)
         
     }
-    //
 }
 extension ChooseWayController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -91,6 +82,9 @@ extension ChooseWayController: UIImagePickerControllerDelegate, UINavigationCont
          self.imagePickercontroller.dismiss(animated: true, completion: nil)
          let cropViewController=CropViewController()
          cropViewController.setUp(image: self.imageView.image!)
+         cropViewController.backClosure1 = { (image:UIImage) in
+             self.selectedImages.append(image)
+         }
          present(cropViewController, animated: true, completion: nil)
      }
 }

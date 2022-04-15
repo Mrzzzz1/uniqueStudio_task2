@@ -11,6 +11,8 @@ class CropViewController: UIViewController {
     var upView = UIView()
     var lowView = UIView()
     var image: UIImage!
+    var backClosure1: ((UIImage)->Void)?
+    var backClosure2: ((Int)->Void)?
     var color1 = UIColor(red: 0, green: 0, blue: 0, alpha: 0.8)
     var color2 = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2)
     var imageView = UIImageView()
@@ -81,12 +83,16 @@ class CropViewController: UIViewController {
         self.view.addSubview(doneButton)
     }
     @objc func cancel() {
+        backClosure2?(-1)
          self.dismiss(animated: true, completion: nil)
-        //回传信息
+        
     }
     @objc func done() {
         cropImage()
-        //回传裁剪后的照片
+        backClosure2?(1)
+        backClosure1?(newImage)
+        
+        self.dismiss(animated: true, completion: nil)
     }
     
     //画边框

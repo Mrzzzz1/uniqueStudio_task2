@@ -8,13 +8,16 @@
 import Foundation
 import UIKit
 protocol CollectionViewCellDelegate {
+    //var newImage: UIImage? {get set}
+    //var success: Int!{get set}
+    //var success: Bool!{get set}
     func addSelectedImage(image: UIImage,tag :Int)
-    func crop(image: UIImage)
+    func crop(image: UIImage,index: Int)
     func removeSelectedImage(tag: Int)
 }
 class CollectionViewCell: UICollectionViewCell {
     var flag = false
-    var imageView = UIImageView()
+    var imageView: UIImageView! = UIImageView()
     private var startLocation = CGPoint()
     var sellectButton = UIButton()
     var delegate: CollectionViewCellDelegate? = nil
@@ -68,9 +71,10 @@ class CollectionViewCell: UICollectionViewCell {
         if let touch=touches.first { 
             let endLocation = touch.preciseLocation(in: self)
             if(startLocation.x-endLocation.x < 5 && startLocation.x-endLocation.x > -5 && startLocation.y-endLocation.y < 5 && startLocation.y-endLocation.y > -5){
-                delegate?.crop(image: self.imageView.image!)
+                delegate?.crop(image: self.imageView.image!,index: self.tag%10)
             }
         }
     }
+    
 
 }
