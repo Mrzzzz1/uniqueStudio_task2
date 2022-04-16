@@ -21,10 +21,19 @@ class ViewController: UIViewController {
         button.setTitle("选择图片", for: .normal)
         
         button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(self.chooseWay), for: .touchUpInside)
+        button.addTarget(self, action: #selector(selectpt), for: .touchUpInside)
     }
-    @objc func chooseWay() {
+    @objc func selectpt() {
         let choosewayController=ChooseWayController()
+        //choosewayController.maxSize=...
+        //choosewayController.minSize=...
+        choosewayController.backClosureforSuccess = { (images:[UIImage]) in //使用获取的照片
+            print("获得\(images.count)张图片")
+        }
+        choosewayController.backClosureForFail = { (reason:StopReason) in
+            print("未获得图片原因：\(reason)")
+            
+        }
         present(choosewayController, animated: true, completion: nil)
     }
 

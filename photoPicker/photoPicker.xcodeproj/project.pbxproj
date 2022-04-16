@@ -10,6 +10,7 @@
 		4C2514F028041408004A9D05 /* selectFromAlbum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2514EF28041408004A9D05 /* selectFromAlbum.swift */; };
 		4C5F4A50280270D00031B269 /* pickPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5F4A4F280270D00031B269 /* pickPhoto.swift */; };
 		4C5F4A5228027A5D0031B269 /* stopReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5F4A5128027A5D0031B269 /* stopReason.swift */; };
+		4C8376C7280A6C5E004513FE /* finalcell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8376C6280A6C5E004513FE /* finalcell.swift */; };
 		4CCA3D732801BA4100D11C89 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCA3D722801BA4100D11C89 /* AppDelegate.swift */; };
 		4CCA3D752801BA4100D11C89 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCA3D742801BA4100D11C89 /* SceneDelegate.swift */; };
 		4CCA3D772801BA4100D11C89 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCA3D762801BA4100D11C89 /* ViewController.swift */; };
@@ -45,6 +46,7 @@
 		4C2514EF28041408004A9D05 /* selectFromAlbum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = selectFromAlbum.swift; sourceTree = "<group>"; };
 		4C5F4A4F280270D00031B269 /* pickPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pickPhoto.swift; sourceTree = "<group>"; };
 		4C5F4A5128027A5D0031B269 /* stopReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = stopReason.swift; sourceTree = "<group>"; };
+		4C8376C6280A6C5E004513FE /* finalcell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finalcell.swift; sourceTree = "<group>"; };
 		4CCA3D6F2801BA4100D11C89 /* photoPicker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = photoPicker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CCA3D722801BA4100D11C89 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4CCA3D742801BA4100D11C89 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 			children = (
 				4C5F4A4F280270D00031B269 /* pickPhoto.swift */,
 				4C2514EF28041408004A9D05 /* selectFromAlbum.swift */,
+				4C8376C6280A6C5E004513FE /* finalcell.swift */,
 				4CD5BAAF2807FF22003440E7 /* collectionViewCell.swift */,
 				4CCA3DA62801BB4200D11C89 /* crop.swift */,
 				4C5F4A5128027A5D0031B269 /* stopReason.swift */,
@@ -288,6 +291,7 @@
 				4CCA3D7D2801BA4100D11C89 /* photoPicker.xcdatamodeld in Sources */,
 				4CCA3D772801BA4100D11C89 /* ViewController.swift in Sources */,
 				4CCA3D732801BA4100D11C89 /* AppDelegate.swift in Sources */,
+				4C8376C7280A6C5E004513FE /* finalcell.swift in Sources */,
 				4CCA3D752801BA4100D11C89 /* SceneDelegate.swift in Sources */,
 				4C2514F028041408004A9D05 /* selectFromAlbum.swift in Sources */,
 				4C5F4A5228027A5D0031B269 /* stopReason.swift in Sources */,

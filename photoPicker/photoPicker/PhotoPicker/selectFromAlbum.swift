@@ -9,6 +9,8 @@ import PhotosUI
 import Foundation
 import UIKit
 class SelectViewController: UIViewController {
+    var minSize: CGSize?
+    var maxSize: CGSize?
     var moreButton: UIButton!
     var backClosureforSuccess: (([UIImage])->Void)?
     var backClosureForFail: ((StopReason)->Void)?
@@ -25,11 +27,15 @@ class SelectViewController: UIViewController {
     var allAssets=PHFetchResult<PHAsset>()
     override func viewDidLoad() {
         PHPhotoLibrary.shared().register(self)
+        self.view.backgroundColor = .white
         getPermission()
         getphotos()
         setUpCollectionView()
         setUpLabel()
         setUpButton()
+    }
+    deinit {
+        PHPhotoLibrary.shared().unregisterChangeObserver(self)
     }
         //获取相册权限
     func getPermission() {
@@ -42,8 +48,9 @@ class SelectViewController: UIViewController {
                 case .authorized:
                     print("全部")
                 default:
-                    self.backClosureForFail?(StopReason.noAlbum)
                     self.dismiss(animated: true, completion: nil)
+                    self.backClosureForFail?(StopReason.noAlbum)
+                    
                 }
             }
         }
@@ -64,7 +71,7 @@ class SelectViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.itemSize = CGSize(width: self.view.frame.width/3.2, height: self.view.frame.width/3)
-        collectionView = UICollectionView(frame:CGRect(x: 0, y: 60, width: self.view.frame.width, height: self.view.frame.height), collectionViewLayout: layout)
+        collectionView = UICollectionView(frame:CGRect(x: 0, y: 60, width: self.view.frame.width, height: self.view.frame.height-150), collectionViewLayout: layout)
         self.view.addSubview(collectionView)
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -72,7 +79,7 @@ class SelectViewController: UIViewController {
     }
     func setUpLabel() {
         titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 60))
-        titleLabel.text = "最近图片>"
+        titleLabel.text = "最近项目>"
         titleLabel.textColor = .black
         titleLabel.textAlignment = .center
         titleLabel.backgroundColor = .white
@@ -95,15 +102,15 @@ class SelectViewController: UIViewController {
             moreButton.isHidden=true
         }
         //取消
-        let cancelButton = UIButton(frame: CGRect(x: 50, y: self.view.frame.height-100, width: 100, height: 50))
+        let cancelButton = UIButton(frame: CGRect(x: 50, y: self.view.frame.height-150, width: 100, height: 50))
         cancelButton.setTitle("取消", for: .normal)
-        cancelButton.setTitleColor(.white, for: .normal)
+        cancelButton.setTitleColor(.black, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
         self.view.addSubview(cancelButton)
         //确认
-        let doneButton = UIButton(frame: CGRect(x: self.view.frame.width-150, y: self.view.frame.height-100, width: 100, height: 50))
+        let doneButton = UIButton(frame: CGRect(x: self.view.frame.width-150, y: self.view.frame.height-150, width: 100, height: 50))
         doneButton.setTitle("确认", for: .normal)
-        doneButton.setTitleColor(.white, for: .normal)
+        doneButton.setTitleColor(.black, for: .normal)
         doneButton.addTarget(self, action: #selector(done), for: .touchUpInside)
         self.view.addSubview(doneButton)
     }
@@ -123,7 +130,33 @@ class SelectViewController: UIViewController {
     }
     @objc func clickButton(){
         debugPrint("点击按钮")
+        showActionSheet()
     }
+    func showActionSheet() {
+        let alertController = UIAlertController(title: "文件夹", message: .none, preferredStyle: .actionSheet)
+        let action = UIAlertAction(title: "最近项目", style: .default, handler: { _ in
+            if self.indexNow != 0{
+                self.indexNow=0
+                self.collectionView.reloadData()
+                self.titleLabel.text="最近项目>"
+            }
+            
+        })
+        alertController.addAction(action)
+        for i in 0..<topLevelUserCollections.count {
+            let action = UIAlertAction(title: self.topLevelUserCollections.object(at: i ).localizedTitle, style: .default, handler: {_ in
+                if self.indexNow != i+1 {
+                self.indexNow=i+1
+                self.collectionView.reloadData()
+                    self.titleLabel.text=self.topLevelUserCollections.object(at: i ).localizedTitle ?? ""+">"
+                }
+            })
+            alertController.addAction(action)
+        }
+        self.present(alertController, animated: true, completion: nil)
+        
+    }
+    
 }
 
 
@@ -171,7 +204,7 @@ extension SelectViewController: UICollectionViewDelegate,UICollectionViewDataSou
         if indexNow==0{
             return allAssets.count
         }else {
-            let assetsFetchResults: PHFetchResult = PHAsset.fetchAssets(in: topLevelUserCollections[indexNow] as! PHAssetCollection, options: nil)
+            let assetsFetchResults: PHFetchResult = PHAsset.fetchAssets(in: topLevelUserCollections.object(at: indexNow-1) as! PHAssetCollection, options: nil)
             return assetsFetchResults.count
         }
     }
@@ -191,7 +224,7 @@ extension SelectViewController: UICollectionViewDelegate,UICollectionViewDataSou
                         cell.tag = self.indexNow*10+indexPath.item
                     })
         }else {
-            let assetsFetchResults: PHFetchResult = PHAsset.fetchAssets(in: topLevelUserCollections[indexNow] as! PHAssetCollection, options: nil)
+            let assetsFetchResults: PHFetchResult = PHAsset.fetchAssets(in: topLevelUserCollections.object(at: indexNow-1) as! PHAssetCollection, options: nil)
             imageManager.requestImage(
                 for: assetsFetchResults[indexPath.item],
                    targetSize:  PHImageManagerMaximumSize,
