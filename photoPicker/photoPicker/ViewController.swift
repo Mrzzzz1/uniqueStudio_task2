@@ -25,7 +25,7 @@ class ViewController: UIViewController {
     }
     @objc func selectpt() {
         let choosewayController=ChooseWayController()
-        //choosewayController.maxSize=...
+        choosewayController.maxSize=CGSize(width: 100, height: 100)
         //choosewayController.minSize=...
         choosewayController.backClosureforSuccess = { (images:[UIImage]) in //使用获取的照片
             print("获得\(images.count)张图片")

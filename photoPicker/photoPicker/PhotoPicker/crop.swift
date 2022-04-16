@@ -20,17 +20,16 @@ class CropViewController: UIViewController {
     var cropRectView = UIScrollView()
     
     override func viewDidLoad() {
-        self.view.backgroundColor = .black
+        view.backgroundColor = .black
     }
+
     func setUp(image: UIImage) {
+        self.image = image
+        // 裁剪框
         
-        
-        self.image = image;
-        //裁剪框
-        
-        self.view.addSubview(cropRectView)
-        cropRectView.frame.origin = CGPoint(x: 0, y: (self.view.frame.height-self.view.frame.width)/2)
-        cropRectView.frame.size = CGSize(width: self.view.frame.width, height: self.view.frame.width)
+        view.addSubview(cropRectView)
+        cropRectView.frame.origin = CGPoint(x: 0, y: (view.frame.height-view.frame.width)/2)
+        cropRectView.frame.size = CGSize(width: view.frame.width, height: view.frame.width)
         cropRectView.clipsToBounds = false
         cropRectView.maximumZoomScale = 2
         cropRectView.minimumZoomScale = 1
@@ -43,167 +42,157 @@ class CropViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.leadingAnchor.constraint(equalTo: cropRectView.leadingAnchor).isActive = true
         imageView.topAnchor.constraint(equalTo: cropRectView.topAnchor).isActive = true
-        if image.size.width>image.size.height {
+        if image.size.width > image.size.height {
             imageView.heightAnchor.constraint(equalTo: cropRectView.heightAnchor).isActive = true
             imageView.widthAnchor.constraint(equalTo: cropRectView.widthAnchor, multiplier: image.size.width/image.size.height).isActive = true
-            cropRectView.contentSize = CGSize(width: self.view.frame.width*image.size.width/image.size.height, height: self.view.frame.width)
-            cropRectView.contentOffset.x = (cropRectView.contentSize.width - cropRectView.frame.width) / 2
+            cropRectView.contentSize = CGSize(width: view.frame.width*image.size.width/image.size.height, height: view.frame.width)
+            cropRectView.contentOffset.x = (cropRectView.contentSize.width-cropRectView.frame.width)/2
             print(cropRectView.contentSize.width)
             print(cropRectView.frame.width)
-            
         }
         else {
             imageView.widthAnchor.constraint(equalTo: cropRectView.widthAnchor).isActive = true
             imageView.heightAnchor.constraint(equalTo: cropRectView.heightAnchor, multiplier: image.size.height/image.size.width).isActive = true
-            cropRectView.contentSize=CGSize(width: self.view.frame.width, height: self.view.frame.width*image.size.height/image.size.width)
-            cropRectView.contentOffset.y = (self.view.frame.width*image.size.height/image.size.width - cropRectView.frame.width) / 2
+            cropRectView.contentSize = CGSize(width: view.frame.width, height: view.frame.width*image.size.height/image.size.width)
+            cropRectView.contentOffset.y = (view.frame.width*image.size.height/image.size.width-cropRectView.frame.width)/2
         }
         
-        upView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: (self.view.frame.height-self.view.frame.width)/2))
-        upView.backgroundColor=color1
-        lowView = UIView(frame: CGRect(x: 0, y: (self.view.frame.height+self.view.frame.width)/2, width: self.view.frame.width, height: (self.view.frame.height-self.view.frame.width)/2))
+        upView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: (view.frame.height-view.frame.width)/2))
+        upView.backgroundColor = color1
+        lowView = UIView(frame: CGRect(x: 0, y: (view.frame.height + view.frame.width)/2, width: view.frame.width, height: (view.frame.height-view.frame.width)/2))
         lowView.backgroundColor = color1
-        self.view.addSubview(upView)
-        self.view.addSubview(lowView)
+        view.addSubview(upView)
+        view.addSubview(lowView)
         
         setUpButton()
-
     }
     
     func setUpButton() {
-        let cancelButton = UIButton(frame: CGRect(x: 50, y: self.view.frame.height-100, width: 100, height: 50))
+        let cancelButton = UIButton(frame: CGRect(x: 50, y: view.frame.height-100, width: 100, height: 50))
         cancelButton.setTitle("取消", for: .normal)
         cancelButton.setTitleColor(.white, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
-        self.view.addSubview(cancelButton)
-        let doneButton = UIButton(frame: CGRect(x: self.view.frame.width-150, y: self.view.frame.height-100, width: 100, height: 50))
+        view.addSubview(cancelButton)
+        let doneButton = UIButton(frame: CGRect(x: view.frame.width-150, y: view.frame.height-100, width: 100, height: 50))
         doneButton.setTitle("确认", for: .normal)
         doneButton.setTitleColor(.white, for: .normal)
         doneButton.addTarget(self, action: #selector(done), for: .touchUpInside)
-        self.view.addSubview(doneButton)
+        view.addSubview(doneButton)
     }
+
     @objc func cancel() {
         backClosure2?(-1)
-         self.dismiss(animated: true, completion: nil)
-        
+        dismiss(animated: true, completion: nil)
     }
+
     @objc func done() {
         cropImage()
         backClosure2?(1)
         backClosure1?(newImage)
         
-        self.dismiss(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
     
-    //画边框
+    // 画边框
     func drawBorderLayer() {
-        let borderLayer =  CAShapeLayer()
+        let borderLayer = CAShapeLayer()
         borderLayer.bounds = cropRectView.bounds
                 
-        borderLayer.position = self.view.layer.position;
+        borderLayer.position = view.layer.position
         borderLayer.path = UIBezierPath(roundedRect: borderLayer.bounds, cornerRadius: 2).cgPath
-        borderLayer.lineWidth = 5 / UIScreen.main.scale
-        borderLayer.lineDashPattern = [4,2] as [NSNumber]
-        borderLayer.lineDashPhase = 0.1;
+        borderLayer.lineWidth = 5/UIScreen.main.scale
+        borderLayer.lineDashPattern = [4, 2] as [NSNumber]
+        borderLayer.lineDashPhase = 0.1
         borderLayer.fillColor = UIColor.clear.cgColor
         borderLayer.strokeColor = UIColor.white.cgColor
-        self.view.layer.addSublayer(borderLayer)
-                
-       
+        view.layer.addSublayer(borderLayer)
     }
-    //裁剪图片
+
+    // 裁剪图片
     func cropImage() {
         image = image.fixOrientation()
         let cgImage = image.cgImage!
-        let rect = CGRect(x: cropRectView.contentOffset.x*image.size.width/cropRectView.contentSize.width, y:cropRectView.contentOffset.y*image.size.height/cropRectView.contentSize.height , width: cropRectView.frame.width*image.size.width/cropRectView.contentSize.width, height:cropRectView.frame.height*image.size.height/cropRectView.contentSize.height)
+        let rect = CGRect(x: cropRectView.contentOffset.x*image.size.width/cropRectView.contentSize.width, y: cropRectView.contentOffset.y*image.size.height/cropRectView.contentSize.height, width: cropRectView.frame.width*image.size.width/cropRectView.contentSize.width, height: cropRectView.frame.height*image.size.height/cropRectView.contentSize.height)
         let newImage = cgImage.cropping(to: rect)!
         self.newImage = UIImage(cgImage: newImage)
-        //Debug
+        // Debug
         imageView.image = self.newImage
-        
     }
-    
-    
 }
 
-extension CropViewController:UIScrollViewDelegate {
-    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+extension CropViewController: UIScrollViewDelegate {
+    func viewForZooming(in scrollView: UIScrollView)->UIView? {
         return imageView
     }
+
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
         upView.backgroundColor = color2
         lowView.backgroundColor = color2
-        
     }
+
     func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
         upView.backgroundColor = color1
         lowView.backgroundColor = color1
     }
+
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         upView.backgroundColor = color2
         lowView.backgroundColor = color2
     }
+
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         upView.backgroundColor = color1
         lowView.backgroundColor = color1
-        
     }
 }
 
-//若不向上，旋转为向上，若为镜像，则翻转加旋转
+// 若不向上，旋转为向上，若为镜像，则翻转加旋转
 extension UIImage {
     // 修复图片旋转
-    func fixOrientation() ->UIImage{
-        if self.imageOrientation == .up{
+    func fixOrientation() ->UIImage {
+        if imageOrientation == .up {
             return self
         }
         var transform = CGAffineTransform.identity
 
-        switch self.imageOrientation {
+        switch imageOrientation {
         case .down, .downMirrored:
-            transform = transform.translatedBy(x:self.size.width, y:self.size.height)
+            transform = transform.translatedBy(x: size.width, y: size.height)
             transform = transform.rotated(by: .pi)
-            break
 
         case .left, .leftMirrored:
-            transform = transform.translatedBy(x:self.size.width, y:0)
+            transform = transform.translatedBy(x: size.width, y: 0)
             transform = transform.rotated(by: .pi/2)
-            break
 
         case .right, .rightMirrored:
-            transform = transform.translatedBy(x:0, y:self.size.height)
+            transform = transform.translatedBy(x: 0, y: size.height)
             transform = transform.rotated(by: -.pi/2)
-            break
 
         default:
             break
         }
 
-        switch self.imageOrientation {
+        switch imageOrientation {
         case .upMirrored, .downMirrored:
-            transform = transform.translatedBy(x:self.size.width, y:0)
-            transform = transform.scaledBy(x:-1, y:1)
-            break
+            transform = transform.translatedBy(x: size.width, y: 0)
+            transform = transform.scaledBy(x: -1, y: 1)
 
         case .leftMirrored, .rightMirrored:
-            transform = transform.translatedBy(x:self.size.height, y:0);
-            transform = transform.scaledBy(x:-1, y:1)
-            break
+            transform = transform.translatedBy(x: size.height, y: 0)
+            transform = transform.scaledBy(x: -1, y: 1)
         default:
             break
         }
 
-        let ctx = CGContext(data:nil, width:Int(self.size.width), height:Int(self.size.height), bitsPerComponent:self.cgImage!.bitsPerComponent, bytesPerRow:0, space:self.cgImage!.colorSpace!, bitmapInfo:self.cgImage!.bitmapInfo.rawValue)
+        let ctx = CGContext(data: nil, width: Int(size.width), height: Int(size.height), bitsPerComponent: cgImage!.bitsPerComponent, bytesPerRow: 0, space: cgImage!.colorSpace!, bitmapInfo: cgImage!.bitmapInfo.rawValue)
         ctx?.concatenate(transform)
 
-        switch self.imageOrientation {
+        switch imageOrientation {
         case .left, .leftMirrored, .right, .rightMirrored:
-            ctx?.draw(self.cgImage!, in:CGRect(x:CGFloat(0), y:CGFloat(0), width:CGFloat(size.height), height:CGFloat(size.width)))
-            break
+            ctx?.draw(cgImage!, in: CGRect(x: CGFloat(0), y: CGFloat(0), width: CGFloat(size.height), height: CGFloat(size.width)))
 
         default:
-            ctx?.draw(self.cgImage!, in:CGRect(x:CGFloat(0), y:CGFloat(0), width:CGFloat(size.width), height:CGFloat(size.height)))
-            break
+            ctx?.draw(cgImage!, in: CGRect(x: CGFloat(0), y: CGFloat(0), width: CGFloat(size.width), height: CGFloat(size.height)))
         }
 
         let cgimg: CGImage = (ctx?.makeImage())!
@@ -212,5 +201,3 @@ extension UIImage {
         return img
     }
 }
-
-

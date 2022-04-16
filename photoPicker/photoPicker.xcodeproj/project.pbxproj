@@ -115,8 +115,8 @@
 			children = (
 				4CCA3DA52801BA5700D11C89 /* PhotoPicker */,
 				4CCA3D722801BA4100D11C89 /* AppDelegate.swift */,
-				4CCA3D742801BA4100D11C89 /* SceneDelegate.swift */,
 				4CCA3D762801BA4100D11C89 /* ViewController.swift */,
+				4CCA3D742801BA4100D11C89 /* SceneDelegate.swift */,
 				4CCA3D782801BA4100D11C89 /* Main.storyboard */,
 				4CCA3D7E2801BA4400D11C89 /* Assets.xcassets */,
 				4CCA3D802801BA4400D11C89 /* LaunchScreen.storyboard */,
