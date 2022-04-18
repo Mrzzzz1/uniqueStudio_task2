@@ -6,8 +6,9 @@
 //
 
 import UIKit
-
 class ViewController: UIViewController {
+    //是否只需要一张图片
+    var chooseOnlyOne=false
     let button = UIButton(frame: CGRect(x: 50, y: 50, width: 100, height: 50))
 
     override func viewDidLoad() {
@@ -23,9 +24,11 @@ class ViewController: UIViewController {
         button.setTitleColor(.black, for: .normal)
         button.addTarget(self, action: #selector(selectpt), for: .touchUpInside)
     }
+    
     @objc func selectpt() {
         let choosewayController=ChooseWayController()
-        choosewayController.maxSize=CGSize(width: 100, height: 100)
+        choosewayController.delegate=self
+        //choosewayController.maxSize=CGSize(width: 100, height: 100)
         //choosewayController.minSize=...
         choosewayController.backClosureforSuccess = { (images:[UIImage]) in //使用获取的照片
             print("获得\(images.count)张图片")
@@ -37,5 +40,16 @@ class ViewController: UIViewController {
         present(choosewayController, animated: true, completion: nil)
     }
 
+}
+extension ViewController: SelectViewControllerDelegate{
+    func judge(image: UIImage) -> Bool {
+        //
+        return true
+    }
+    func doWhilefalse() {
+        print(false)
+    }
+    
+    
 }
 

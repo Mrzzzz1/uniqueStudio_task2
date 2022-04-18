@@ -8,8 +8,7 @@
 import Foundation
 import UIKit
 class ChooseWayController: UIViewController {
-    var minSize: CGSize?
-    var maxSize: CGSize?
+    var delegate: SelectViewControllerDelegate?
     var backClosureforSuccess: (([UIImage]) -> Void)?
     var backClosureForFail: ((StopReason) -> Void)?
     var stopReason: StopReason?
@@ -17,12 +16,21 @@ class ChooseWayController: UIViewController {
     var imageView = UIImageView()
     var firstTime: Bool = true
     var selectedImages: [UIImage] = []
+    var onlyOneImage: UIImage?
     let imagePickercontroller = UIImagePickerController()
     
     override func viewDidLoad() {
         view.backgroundColor = .white
         setUpButton()
-        setUpCollectionView()
+        if let delegate = delegate {
+            if delegate.chooseOnlyOne {
+                setUpimageView()
+            } else {
+                setUpCollectionView()
+            }
+        } else {
+            setUpCollectionView()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -44,6 +52,11 @@ class ChooseWayController: UIViewController {
         collectionView.register(FinalCell.self, forCellWithReuseIdentifier: "item")
     }
 
+    func setUpimageView() {
+        imageView = UIImageView(frame: CGRect(x: 0, y: 60, width: view.frame.width, height: view.frame.height-210))
+        view.addSubview(imageView)
+    }
+
     func setUpButton() {
         let cancelButton = UIButton(frame: CGRect(x: 50, y: view.frame.height-120, width: 100, height: 50))
         cancelButton.setTitle("取消", for: .normal)
@@ -57,7 +70,16 @@ class ChooseWayController: UIViewController {
         view.addSubview(doneButton)
         let moreButton = UIButton(frame: CGRect(x: view.frame.width-150, y: 0, width: 150, height: 60))
         view.addSubview(moreButton)
-        moreButton.setTitle("选择更多图片", for: .normal)
+        if let delegate = delegate {
+            if delegate.chooseOnlyOne {
+                moreButton.setTitle("重新选择", for: .normal)
+            } else {
+                moreButton.setTitle("选择更多图片", for: .normal)
+            }
+        } else {
+            moreButton.setTitle("选择更多图片", for: .normal)
+        }
+        
         moreButton.setTitleColor(.black, for: .normal)
         moreButton.addTarget(self, action: #selector(getMorePhotos), for: .touchUpInside)
     }
@@ -68,14 +90,25 @@ class ChooseWayController: UIViewController {
     }
     
     @objc func done() {
-        if selectedImages.isEmpty {
+        if selectedImages.isEmpty, onlyOneImage == nil {
             backClosureForFail?(StopReason.chooseNoPhoto)
         } else {
-            backClosureforSuccess?(selectedImages)
+            if let delegate = delegate {
+                if delegate.chooseOnlyOne {
+                    if let onlyOneImage = onlyOneImage {
+                        let image: [UIImage] = [onlyOneImage]
+                        backClosureforSuccess?(image)
+                    }
+                } else {
+                    backClosureforSuccess?(selectedImages)
+                }
+            } else {
+                backClosureforSuccess?(selectedImages)
+            }
         }
         dismiss(animated: true, completion: nil)
     }
-    
+
     @objc func getMorePhotos() {
         showActionSheet()
     }
@@ -97,7 +130,6 @@ class ChooseWayController: UIViewController {
     }
 
     func takePhoto() {
-        imagePickercontroller.delegate = self
         imagePickercontroller.allowsEditing = true
         if !UIImagePickerController.isSourceTypeAvailable(.camera) {
             stopReason = .noCamera
@@ -116,17 +148,26 @@ class ChooseWayController: UIViewController {
     
     func selectFromAlbum() {
         let selectViewController = SelectViewController()
-        if let size1 = minSize {
-            selectViewController.minSize = size1
+        if let delegate = delegate {
+            selectViewController.delegate = delegate
         }
-        if let size2 = maxSize {
-            selectViewController.maxSize = size2
-        }
-        selectViewController.backClosureforSuccess = { (images: [UIImage]) in
+        selectViewController.backClosureforSuccess = { (images: [UIImage]) in if let delegate = self.delegate {
+            if delegate.chooseOnlyOne {
+                self.onlyOneImage = images[0]
+                self.imageView.image = self.onlyOneImage
+//                print(self.imageView.image?.size)
+            } else {
+                for i in 0 ..< images.count {
+                    self.selectedImages.append(images[i])
+                    self.collectionView.reloadData()
+                }
+            }
+        } else {
             for i in 0 ..< images.count {
                 self.selectedImages.append(images[i])
                 self.collectionView.reloadData()
             }
+        }
         }
         selectViewController.backClosureForFail = {
             (reason: StopReason) in self.stopReason = reason
@@ -146,18 +187,30 @@ extension ChooseWayController: UIImagePickerControllerDelegate, UINavigationCont
     }
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        imageView = UIImageView(frame: CGRect(x: 0, y: 20, width: view.frame.width, height: view.frame.height))
-        imageView.image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+        let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
         imagePickercontroller.dismiss(animated: true, completion: nil)
         let cropViewController = CropViewController()
-        cropViewController.setUp(image: imageView.image!)
-        cropViewController.backClosure1 = { (image: UIImage) in
-            self.selectedImages.append(image)
+        if let image = image {
+            cropViewController.setUp(image: image)
+            cropViewController.backClosure1 = { (image: UIImage) in
+                if let delegate = self.delegate {
+                    if delegate.chooseOnlyOne == true {
+                        self.onlyOneImage = image
+                        self.imageView.image = image
+                    } else {
+                        self.selectedImages.append(image)
+                        self.collectionView.reloadData()
+                    }
+                } else {
+                    self.selectedImages.append(image)
+                    self.collectionView.reloadData()
+                }
+            }
+            //         cropViewController.backClosure2 = { (
+            //
+            //         }
+            present(cropViewController, animated: true, completion: nil)
         }
-//         cropViewController.backClosure2 = { (
-//
-//         }
-        present(cropViewController, animated: true, completion: nil)
     }
 }
 

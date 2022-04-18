@@ -8,9 +8,16 @@
 import Foundation
 import PhotosUI
 import UIKit
+protocol SelectViewControllerDelegate {
+    func judge(image: UIImage) -> Bool
+    var chooseOnlyOne: Bool { get set }
+    func doWhilefalse()
+}
+
 class SelectViewController: UIViewController {
-    var minSize: CGSize?
-    var maxSize: CGSize?
+    var delegate: SelectViewControllerDelegate?
+//    var minSize: CGSize?
+//    var maxSize: CGSize?
     var moreButton: UIButton!
     var backClosureforSuccess: (([UIImage]) -> Void)?
     var backClosureForFail: ((StopReason) -> Void)?
@@ -90,7 +97,7 @@ class SelectViewController: UIViewController {
         titleLabel.font = UIFont.systemFont(ofSize: 20)
         view.addSubview(titleLabel)
     }
-    
+
     func setUpButton() {
         // 切换相册
         let button = UIButton(frame: titleLabel.frame)
@@ -146,7 +153,7 @@ class SelectViewController: UIViewController {
                 self.collectionView.reloadData()
                 self.titleLabel.text = "最近项目>"
             }
-            
+
         })
         alertController.addAction(action)
         for i in 0..<topLevelUserCollections.count {
@@ -164,45 +171,31 @@ class SelectViewController: UIViewController {
 }
 
 extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSource, CollectionViewCellDelegate {
-    func judgeMin(image:UIImage)->Bool{
-        if let size=self.minSize{
-            if image.size.width>=size.width&&image.size.height>=size.height {
-                return true
+    func addSelectedImage(image: UIImage, tag: Int) -> Bool {
+        if let delegate = delegate {
+            if !delegate.chooseOnlyOne || selectedImage.isEmpty {
+                if delegate.judge(image: image) {
+                    selectedImage.append(image)
+                    flags.append(tag)
+                    return true
+                } else {
+                    delegate.doWhilefalse()
+                    return false
+                }
             } else {
+                let errorAlert = UIAlertController(title: "只能选择一张图片", message: .none, preferredStyle: .alert)
+                let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+                errorAlert.addAction(cancelAction)
+                present(errorAlert, animated: true, completion: nil)
                 return false
             }
-        }else {
-            return true
-        }
-    }
-    func judgeMax(image:UIImage)->Bool{
-        if let size=self.maxSize{
-            if image.size.width<=size.width&&image.size.height<=size.height {
-                return true
-            } else {
-                return false
-            }
-        }else {
-            return true
-        }
-        
-    }
-    func addSelectedImage(image: UIImage, tag: Int)->Bool {
-        if judgeMax(image: image)&&judgeMin(image: image){
+        } else {
             selectedImage.append(image)
             flags.append(tag)
             return true
-            }
-        else {
-            let errorAlert = UIAlertController(title: "图片不合格", message: .none, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler:nil)
-            errorAlert.addAction(cancelAction)
-            present(errorAlert, animated: true, completion: nil)
-            return false
         }
-        
     }
-    
+
     func removeSelectedImage(tag: Int) {
         for i in 0..<flags.count {
             if flags[i] == tag {
@@ -212,7 +205,7 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
             }
         }
     }
-    
+
     func crop(image: UIImage, index: Int) {
         let indexPath = IndexPath(item: index, section: 0)
         let cell = collectionView.cellForItem(at: indexPath) as! CollectionViewCell
@@ -227,7 +220,7 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
         }
         present(cropViewController, animated: true, completion: nil)
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if indexNow == 0 {
             return allAssets.count
@@ -247,9 +240,11 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 contentMode: .aspectFill,
                 options: nil,
                 resultHandler: { result, _ in
-                    cell.config(image: result!)
-                    cell.delegate = self
-                    cell.tag = self.indexNow*10+indexPath.item
+                    if let im = result {
+                        cell.config(image: im)
+                        cell.delegate = self
+                        cell.tag = self.indexNow*10+indexPath.item
+                    }
                 })
         } else {
             let assetsFetchResults: PHFetchResult = PHAsset.fetchAssets(in: topLevelUserCollections.object(at: indexNow-1) as! PHAssetCollection, options: nil)
@@ -259,9 +254,11 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 contentMode: .aspectFill,
                 options: nil,
                 resultHandler: { result, _ in
-                    cell.config(image: result!)
-                    cell.delegate = self
-                    cell.tag = self.indexNow*10+indexPath.item
+                    if let im = result {
+                        cell.config(image: im)
+                        cell.delegate = self
+                        cell.tag = self.indexNow*10+indexPath.item
+                    }
                 })
         }
         return cell
