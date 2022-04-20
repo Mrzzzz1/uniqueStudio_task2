@@ -18,6 +18,7 @@ class ChooseWayController: UIViewController {
     var selectedImages: [UIImage] = []
     var onlyOneImage: UIImage?
     let imagePickercontroller = UIImagePickerController()
+    let label=UILabel()
     
     override func viewDidLoad() {
         view.backgroundColor = .white
@@ -31,6 +32,7 @@ class ChooseWayController: UIViewController {
         } else {
             setUpCollectionView()
         }
+        setUpLabel()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -39,6 +41,16 @@ class ChooseWayController: UIViewController {
             firstTime = false
             showActionSheet()
         }
+    }
+    func setUpLabel(){
+        self.view.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints=false
+        label.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive=true
+        label.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive=true
+        label.text = "请选择图片"
+        label.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        label.font = UIFont.boldSystemFont(ofSize: 30)
+        
     }
 
     func setUpCollectionView() {
@@ -152,7 +164,8 @@ class ChooseWayController: UIViewController {
         if let delegate = delegate {
             selectViewController.delegate = delegate
         }
-        selectViewController.backClosureforSuccess = { (images: [UIImage]) in if let delegate = self.delegate {
+        selectViewController.backClosureforSuccess = { (images: [UIImage]) in self.label.isHidden=true
+            if let delegate = self.delegate {
             if delegate.chooseOnlyOne {
                 self.onlyOneImage = images[0]
                 self.imageView.image = self.onlyOneImage
@@ -194,6 +207,7 @@ extension ChooseWayController: UIImagePickerControllerDelegate, UINavigationCont
         if let image = image {
             cropViewController.setUp(image: image)
             cropViewController.backClosure1 = { (image: UIImage) in
+                self.label.isHidden=true
                 if let delegate = self.delegate {
                     if delegate.chooseOnlyOne == true {
                         self.onlyOneImage = image
@@ -219,6 +233,9 @@ extension ChooseWayController: UICollectionViewDelegate, UICollectionViewDataSou
     func removeImage(at index: Int) {
         selectedImages.remove(at: index)
         collectionView.reloadData()
+        if selectedImages.isEmpty {
+            self.label.isHidden=false
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

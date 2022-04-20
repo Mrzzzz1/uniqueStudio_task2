@@ -31,6 +31,7 @@ class SelectViewController: UIViewController {
     var indexNow = 0
     var topLevelUserCollections = PHFetchResult<PHCollection>()
     var allAssets = PHFetchResult<PHAsset>()
+    let label=UILabel()
     override func viewDidLoad() {
         PHPhotoLibrary.shared().register(self)
         view.backgroundColor = .white
@@ -75,6 +76,7 @@ class SelectViewController: UIViewController {
         // 设定排序规则
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
         allAssets = PHAsset.fetchAssets(with: fetchOptions)
+        
     }
 
     func setUpCollectionView() {
@@ -96,6 +98,15 @@ class SelectViewController: UIViewController {
         titleLabel.backgroundColor = .white
         titleLabel.font = UIFont.systemFont(ofSize: 20)
         view.addSubview(titleLabel)
+        self.view.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints=false
+        label.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive=true
+        label.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive=true
+        label.text = "无可用图片"
+        label.preferredMaxLayoutWidth=self.view.frame.width*0.9
+        label.numberOfLines=2
+        label.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        label.font = UIFont.boldSystemFont(ofSize: 30)
     }
 
     func setUpButton() {
@@ -223,9 +234,19 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if indexNow == 0 {
+            if allAssets.count==0 {
+                self.label.isHidden=false
+            } else {
+                self.label.isHidden=true
+            }
             return allAssets.count
         } else {
             let assetsFetchResults: PHFetchResult = PHAsset.fetchAssets(in: topLevelUserCollections.object(at: indexNow-1) as! PHAssetCollection, options: nil)
+            if assetsFetchResults.count==0 {
+                self.label.isHidden=false
+            } else {
+                self.label.isHidden=true
+            }
             return assetsFetchResults.count
         }
     }
@@ -278,6 +299,7 @@ extension SelectViewController: PHPhotoLibraryChangeObserver {
             self.flags.removeAll()
             if PHPhotoLibrary.authorizationStatus(for: .readWrite) == .authorized {
                 self.moreButton.isHidden = true
+                self.label.isHidden=true
             } else {
                 self.moreButton.isHidden = false
             }
