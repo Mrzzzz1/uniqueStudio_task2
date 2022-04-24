@@ -8,16 +8,18 @@
 import UIKit
 class ViewController: UIViewController {
     //是否只需要一张图片
-    var chooseOnlyOne=false
+    var chooseOnlyOne=true
     let button = UIButton(frame: CGRect(x: 50, y: 50, width: 100, height: 50))
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        view.backgroundColor = .white
         setUpButton()
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "选择图片", style: .done, target: self, action: #selector(selectpt))
     }
 
     func setUpButton() {
+        
         view.addSubview(button)
         button.setTitle("选择图片", for: .normal)
         
@@ -28,8 +30,6 @@ class ViewController: UIViewController {
     @objc func selectpt() {
         let choosewayController=ChooseWayController()
         choosewayController.delegate=self
-        //choosewayController.maxSize=CGSize(width: 100, height: 100)
-        //choosewayController.minSize=...
         choosewayController.backClosureforSuccess = { (images:[UIImage]) in //使用获取的照片
             print("获得\(images.count)张图片")
         }
@@ -41,6 +41,7 @@ class ViewController: UIViewController {
     }
 
 }
+
 extension ViewController: SelectViewControllerDelegate{
     func judge(image: UIImage) -> Bool {
         //

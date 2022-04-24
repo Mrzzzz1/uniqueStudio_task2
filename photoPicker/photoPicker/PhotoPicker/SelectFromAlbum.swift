@@ -10,7 +10,7 @@ import PhotosUI
 import UIKit
 protocol SelectViewControllerDelegate {
     func judge(image: UIImage) -> Bool
-    var chooseOnlyOne: Bool { get set }
+    var chooseOnlyOne: Bool { get }
     func doWhilefalse()
 }
 
@@ -40,6 +40,8 @@ class SelectViewController: UIViewController {
         setUpCollectionView()
         setUpLabel()
         setUpButton()
+        let leftButton = UIBarButtonItem(title: "取消", style: .plain, target: self, action: #selector(cancel))
+            self.navigationItem.leftBarButtonItem = leftButton
     }
 
     deinit {
@@ -115,7 +117,7 @@ class SelectViewController: UIViewController {
         view.addSubview(button)
         button.addTarget(self, action: #selector(clickButton), for: .touchUpInside)
         // 从相册选择更多照片
-        moreButton = UIButton(frame: CGRect(x: view.frame.width-100, y: 0, width: 100, height: 60))
+        moreButton = UIButton(frame: CGRect(x: view.frame.width/2-50, y: view.frame.height-150, width: 100, height: 50))
         view.addSubview(moreButton)
         moreButton.setTitle("更多图片", for: .normal)
         moreButton.setTitleColor(.black, for: .normal)
@@ -124,17 +126,29 @@ class SelectViewController: UIViewController {
             moreButton.isHidden = true
         }
         // 取消
-        let cancelButton = UIButton(frame: CGRect(x: 50, y: view.frame.height-150, width: 100, height: 50))
+        let cancelButton = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 60))
         cancelButton.setTitle("取消", for: .normal)
         cancelButton.setTitleColor(.black, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
         view.addSubview(cancelButton)
-        // 确认
-        let doneButton = UIButton(frame: CGRect(x: view.frame.width-150, y: view.frame.height-150, width: 100, height: 50))
+//        let leftButton = UIBarButtonItem(title: "取消", style: .plain, target: self, action: #selector(cancel))
+//            self.navigationItem.leftBarButtonItem = leftButton
+
+       //  确认
+        let doneButton = UIButton(frame: CGRect(x: view.frame.width-100, y: 0, width: 100, height: 60))
+//        let doneButton = UIButton(frame: CGRect(x: view.frame.width-150, y: view.frame.height-150, width: 100, height: 50))
         doneButton.setTitle("确认", for: .normal)
         doneButton.setTitleColor(.black, for: .normal)
         doneButton.addTarget(self, action: #selector(done), for: .touchUpInside)
+
         view.addSubview(doneButton)
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "保存到相册", style: .done, target: self, action: #selector(done))
+        
+        if let delegate = delegate {
+            if delegate.chooseOnlyOne==true {
+                doneButton.isHidden=true
+            }
+        }
     }
 
     @objc func cancel() {
@@ -184,7 +198,17 @@ class SelectViewController: UIViewController {
 extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSource, CollectionViewCellDelegate {
     func addSelectedImage(image: UIImage, tag: Int) -> Bool {
         if let delegate = delegate {
-            if !delegate.chooseOnlyOne || selectedImage.isEmpty {
+            if delegate.chooseOnlyOne {
+                if delegate.judge(image: image) {
+                    selectedImage.append(image)
+                    flags.append(tag)
+                    done()
+                    return true
+                } else {
+                    delegate.doWhilefalse()
+                    return false
+                }
+            } else {
                 if delegate.judge(image: image) {
                     selectedImage.append(image)
                     flags.append(tag)
@@ -193,12 +217,6 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
                     delegate.doWhilefalse()
                     return false
                 }
-            } else {
-                let errorAlert = UIAlertController(title: "只能选择一张图片", message: .none, preferredStyle: .alert)
-                let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
-                errorAlert.addAction(cancelAction)
-                present(errorAlert, animated: true, completion: nil)
-                return false
             }
         } else {
             selectedImage.append(image)

@@ -169,7 +169,6 @@ class ChooseWayController: UIViewController {
             if delegate.chooseOnlyOne {
                 self.onlyOneImage = images[0]
                 self.imageView.image = self.onlyOneImage
-//                print(self.imageView.image?.size)
             } else {
                 for i in 0 ..< images.count {
                     self.selectedImages.append(images[i])
