@@ -18,10 +18,12 @@ class ChooseWayController: UIViewController {
     var selectedImages: [UIImage] = []
     var onlyOneImage: UIImage?
     let imagePickercontroller = UIImagePickerController()
-    let label=UILabel()
-    
+    let label = UILabel()
+
     override func viewDidLoad() {
+        navigationController?.setToolbarHidden(false, animated: true)
         view.backgroundColor = .white
+        navigationController?.toolbar.isHidden = false
         setUpButton()
         if let delegate = delegate {
             if delegate.chooseOnlyOne {
@@ -34,7 +36,7 @@ class ChooseWayController: UIViewController {
         }
         setUpLabel()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if firstTime {
@@ -42,15 +44,15 @@ class ChooseWayController: UIViewController {
             showActionSheet()
         }
     }
-    func setUpLabel(){
-        self.view.addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints=false
-        label.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive=true
-        label.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive=true
+
+    func setUpLabel() {
+        view.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         label.text = "请选择图片"
         label.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         label.font = UIFont.boldSystemFont(ofSize: 30)
-        
     }
 
     func setUpCollectionView() {
@@ -71,37 +73,27 @@ class ChooseWayController: UIViewController {
     }
 
     func setUpButton() {
-        let cancelButton = UIButton(frame: CGRect(x: 50, y: view.frame.height-120, width: 100, height: 50))
-        cancelButton.setTitle("取消", for: .normal)
-        cancelButton.setTitleColor(.black, for: .normal)
-        cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
-        view.addSubview(cancelButton)
-        let doneButton = UIButton(frame: CGRect(x: view.frame.width-150, y: view.frame.height-120, width: 100, height: 50))
-        doneButton.setTitle("确认", for: .normal)
-        doneButton.setTitleColor(.black, for: .normal)
-        doneButton.addTarget(self, action: #selector(done), for: .touchUpInside)
-        view.addSubview(doneButton)
-        let moreButton = UIButton(frame: CGRect(x: view.frame.width-150, y: 0, width: 150, height: 60))
-        view.addSubview(moreButton)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "取消", style: .done, target: self, action: #selector(cancel))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "确认", style: .done, target: self, action: #selector(done))
+        let moreButton = UIBarButtonItem(title: "1", style: .done, target: self, action: #selector(getMorePhotos))
         if let delegate = delegate {
             if delegate.chooseOnlyOne {
-                moreButton.setTitle("重新选择", for: .normal)
+                moreButton.title = "重新选择"
             } else {
-                moreButton.setTitle("选择更多图片", for: .normal)
+                moreButton.title = "选择更多图片"
             }
         } else {
-            moreButton.setTitle("选择更多图片", for: .normal)
+            moreButton.title = "选择更多图片"
         }
-        
-        moreButton.setTitleColor(.black, for: .normal)
-        moreButton.addTarget(self, action: #selector(getMorePhotos), for: .touchUpInside)
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: "barButtonItemClicked:", action: nil)
+        setToolbarItems([flexibleSpace, moreButton, flexibleSpace], animated: true)
     }
-    
+
     @objc func cancel() {
         backClosureForFail?(StopReason.cancelWhileChoosePhoto)
-        dismiss(animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
     }
-    
+
     @objc func done() {
         if selectedImages.isEmpty, onlyOneImage == nil {
             backClosureForFail?(StopReason.chooseNoPhoto)
@@ -119,13 +111,13 @@ class ChooseWayController: UIViewController {
                 backClosureforSuccess?(selectedImages)
             }
         }
-        dismiss(animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
     }
 
     @objc func getMorePhotos() {
         showActionSheet()
     }
-    
+
     func showActionSheet() {
         let alertController = UIAlertController(title: "获取图片", message: .none, preferredStyle: .actionSheet)
         let cancelAction = UIAlertAction(title: "取消", style: .cancel)
@@ -135,7 +127,7 @@ class ChooseWayController: UIViewController {
         let selectAction = UIAlertAction(title: "从手机相册中选择", style: .default, handler: {
             _ in self.selectFromAlbum()
         })
-        
+
         alertController.addAction(cancelAction)
         alertController.addAction(takeAction)
         alertController.addAction(selectAction)
@@ -158,38 +150,37 @@ class ChooseWayController: UIViewController {
         imagePickercontroller.sourceType = .camera
         present(imagePickercontroller, animated: true, completion: nil)
     }
-    
+
     func selectFromAlbum() {
         let selectViewController = SelectViewController()
         if let delegate = delegate {
             selectViewController.delegate = delegate
         }
-        selectViewController.backClosureforSuccess = { (images: [UIImage]) in self.label.isHidden=true
+        selectViewController.backClosureforSuccess = { (images: [UIImage]) in self.label.isHidden = true
             if let delegate = self.delegate {
-            if delegate.chooseOnlyOne {
-                self.onlyOneImage = images[0]
-                self.imageView.image = self.onlyOneImage
+                if delegate.chooseOnlyOne {
+                    self.onlyOneImage = images[0]
+                    self.imageView.image = self.onlyOneImage
+                } else {
+                    for i in 0 ..< images.count {
+                        self.selectedImages.append(images[i])
+                        self.collectionView.reloadData()
+                    }
+                }
             } else {
                 for i in 0 ..< images.count {
                     self.selectedImages.append(images[i])
                     self.collectionView.reloadData()
                 }
             }
-        } else {
-            for i in 0 ..< images.count {
-                self.selectedImages.append(images[i])
-                self.collectionView.reloadData()
-            }
-        }
         }
         selectViewController.backClosureForFail = {
             (reason: StopReason) in self.stopReason = reason
                 if self.stopReason == .noAlbum {
                     self.backClosureForFail?(.noAlbum)
-                    // self.dismiss(animated: true, completion: nil)
                 }
         }
-        present(selectViewController, animated: true, completion: nil)
+        navigationController?.pushViewController(selectViewController, animated: true)
     }
 }
 
@@ -206,7 +197,7 @@ extension ChooseWayController: UIImagePickerControllerDelegate, UINavigationCont
         if let image = image {
             cropViewController.setUp(image: image)
             cropViewController.backClosure1 = { (image: UIImage) in
-                self.label.isHidden=true
+                self.label.isHidden = true
                 if let delegate = self.delegate {
                     if delegate.chooseOnlyOne == true {
                         self.onlyOneImage = image
@@ -220,10 +211,11 @@ extension ChooseWayController: UIImagePickerControllerDelegate, UINavigationCont
                     self.collectionView.reloadData()
                 }
             }
-            //         cropViewController.backClosure2 = { (
-            //
-            //         }
-            present(cropViewController, animated: true, completion: nil)
+            navigationController?.pushViewController(cropViewController, animated: true)
+            navigationController?.toolbar.isHidden = false
+            navigationController?.toolbar.tintColor = .white
+            navigationController?.toolbar.barTintColor = .black
+            navigationController?.navigationBar.isHidden = true
         }
     }
 }
@@ -233,14 +225,14 @@ extension ChooseWayController: UICollectionViewDelegate, UICollectionViewDataSou
         selectedImages.remove(at: index)
         collectionView.reloadData()
         if selectedImages.isEmpty {
-            self.label.isHidden=false
+            label.isHidden = false
         }
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return selectedImages.count
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "item", for: indexPath) as! FinalCell
         cell.config(image: selectedImages[indexPath.item])

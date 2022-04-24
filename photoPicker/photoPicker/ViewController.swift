@@ -8,24 +8,26 @@
 import UIKit
 class ViewController: UIViewController {
     //是否只需要一张图片
-    var chooseOnlyOne=true
-    let button = UIButton(frame: CGRect(x: 50, y: 50, width: 100, height: 50))
+    var chooseOnlyOne=false
+//    let button = UIButton(frame: CGRect(x: 50, y: 50, width: 100, height: 50))
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.tintColor = .black
+        navigationController?.toolbar.tintColor = .black
         view.backgroundColor = .white
-        setUpButton()
-//        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "选择图片", style: .done, target: self, action: #selector(selectpt))
+        //setUpButton()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "选择图片", style: .done, target: self, action: #selector(selectpt))
     }
 
-    func setUpButton() {
-        
-        view.addSubview(button)
-        button.setTitle("选择图片", for: .normal)
-        
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(selectpt), for: .touchUpInside)
-    }
+//    func setUpButton() {
+//
+//        view.addSubview(button)
+//        button.setTitle("选择图片", for: .normal)
+//
+//        button.setTitleColor(.black, for: .normal)
+//        button.addTarget(self, action: #selector(selectpt), for: .touchUpInside)
+//    }
     
     @objc func selectpt() {
         let choosewayController=ChooseWayController()
@@ -37,7 +39,8 @@ class ViewController: UIViewController {
             print("未获得图片原因：\(reason)")
             
         }
-        present(choosewayController, animated: true, completion: nil)
+        navigationController?.pushViewController(choosewayController, animated: true)
+       // present(choosewayController, animated: true, completion: nil)
     }
 
 }

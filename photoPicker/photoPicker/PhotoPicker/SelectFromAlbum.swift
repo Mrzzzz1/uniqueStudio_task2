@@ -16,14 +16,10 @@ protocol SelectViewControllerDelegate {
 
 class SelectViewController: UIViewController {
     var delegate: SelectViewControllerDelegate?
-//    var minSize: CGSize?
-//    var maxSize: CGSize?
-    var moreButton: UIButton!
+    var titlebButton = UIButton()
     var backClosureforSuccess: (([UIImage]) -> Void)?
     var backClosureForFail: ((StopReason) -> Void)?
-    var success: Int! = 0
     var newImage: UIImage?
-    var titleLabel: UILabel!
     var selectedImage: [UIImage] = []
     var flags: [Int] = []
     var stopReason: StopReason?
@@ -31,9 +27,10 @@ class SelectViewController: UIViewController {
     var indexNow = 0
     var topLevelUserCollections = PHFetchResult<PHCollection>()
     var allAssets = PHFetchResult<PHAsset>()
-    let label=UILabel()
+    let label = UILabel()
     override func viewDidLoad() {
         PHPhotoLibrary.shared().register(self)
+        navigationController?.setToolbarHidden(false, animated: true)
         view.backgroundColor = .white
         getPermission()
         getphotos()
@@ -41,7 +38,7 @@ class SelectViewController: UIViewController {
         setUpLabel()
         setUpButton()
         let leftButton = UIBarButtonItem(title: "取消", style: .plain, target: self, action: #selector(cancel))
-            self.navigationItem.leftBarButtonItem = leftButton
+        navigationItem.leftBarButtonItem = leftButton
     }
 
     deinit {
@@ -78,14 +75,14 @@ class SelectViewController: UIViewController {
         // 设定排序规则
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
         allAssets = PHAsset.fetchAssets(with: fetchOptions)
-        
     }
 
     func setUpCollectionView() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.itemSize = CGSize(width: view.frame.width/3.2, height: view.frame.width/3)
-        collectionView = UICollectionView(frame: CGRect(x: 0, y: 60, width: view.frame.width, height: view.frame.height-150), collectionViewLayout: layout)
+        layout.minimumInteritemSpacing = 0
+        layout.itemSize = CGSize(width: view.frame.width/3.05, height: view.frame.width/3)
+        collectionView = UICollectionView(frame: CGRect(x: 0, y: 120, width: view.frame.width, height: view.frame.height-220), collectionViewLayout: layout)
         view.addSubview(collectionView)
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -93,67 +90,44 @@ class SelectViewController: UIViewController {
     }
 
     func setUpLabel() {
-        titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 60))
-        titleLabel.text = "最近项目>"
-        titleLabel.textColor = .black
-        titleLabel.textAlignment = .center
-        titleLabel.backgroundColor = .white
-        titleLabel.font = UIFont.systemFont(ofSize: 20)
-        view.addSubview(titleLabel)
-        self.view.addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints=false
-        label.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive=true
-        label.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive=true
+        view.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         label.text = "无可用图片"
-        label.preferredMaxLayoutWidth=self.view.frame.width*0.9
-        label.numberOfLines=2
+        label.preferredMaxLayoutWidth = view.frame.width*0.9
+        label.numberOfLines = 2
         label.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         label.font = UIFont.boldSystemFont(ofSize: 30)
     }
 
     func setUpButton() {
-        // 切换相册
-        let button = UIButton(frame: titleLabel.frame)
-        view.addSubview(button)
-        button.addTarget(self, action: #selector(clickButton), for: .touchUpInside)
-        // 从相册选择更多照片
-        moreButton = UIButton(frame: CGRect(x: view.frame.width/2-50, y: view.frame.height-150, width: 100, height: 50))
-        view.addSubview(moreButton)
-        moreButton.setTitle("更多图片", for: .normal)
-        moreButton.setTitleColor(.black, for: .normal)
-        moreButton.addTarget(self, action: #selector(getMorePhotos), for: .touchUpInside)
         if PHPhotoLibrary.authorizationStatus(for: .readWrite) == .authorized {
-            moreButton.isHidden = true
+            navigationController?.toolbar.isHidden = true
         }
-        // 取消
-        let cancelButton = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 60))
-        cancelButton.setTitle("取消", for: .normal)
-        cancelButton.setTitleColor(.black, for: .normal)
-        cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
-        view.addSubview(cancelButton)
-//        let leftButton = UIBarButtonItem(title: "取消", style: .plain, target: self, action: #selector(cancel))
-//            self.navigationItem.leftBarButtonItem = leftButton
-
-       //  确认
-        let doneButton = UIButton(frame: CGRect(x: view.frame.width-100, y: 0, width: 100, height: 60))
-//        let doneButton = UIButton(frame: CGRect(x: view.frame.width-150, y: view.frame.height-150, width: 100, height: 50))
-        doneButton.setTitle("确认", for: .normal)
-        doneButton.setTitleColor(.black, for: .normal)
-        doneButton.addTarget(self, action: #selector(done), for: .touchUpInside)
-
-        view.addSubview(doneButton)
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "保存到相册", style: .done, target: self, action: #selector(done))
-        
+        titlebButton = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 50))
+        titlebButton.setTitle("最近图片", for: .normal)
+        titlebButton.setTitleColor(.black, for: .normal)
+        titlebButton.addTarget(self, action: #selector(showActionSheet), for: .touchUpInside)
+        titlebButton.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.1)
+        titlebButton.layer.cornerRadius = 16
+        navigationItem.titleView = titlebButton
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "确认", style: .done, target: self, action: #selector(done))
         if let delegate = delegate {
-            if delegate.chooseOnlyOne==true {
-                doneButton.isHidden=true
+            if delegate.chooseOnlyOne == true {
+                navigationItem.rightBarButtonItem?.title = ""
+                navigationItem.rightBarButtonItem?.action = nil
             }
         }
+        let moreButton = UIBarButtonItem(title: "获取更多图片", style: .done, target: self, action: #selector(getMorePhotos))
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: "barButtonItemClicked:", action: nil)
+        setToolbarItems([flexibleSpace, moreButton, flexibleSpace], animated: true)
     }
 
     @objc func cancel() {
         backClosureForFail?(StopReason.cancelWhileChoosePhoto)
-        dismiss(animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
+        navigationController?.toolbar.isHidden = false
     }
 
     @objc func done() {
@@ -162,7 +136,8 @@ class SelectViewController: UIViewController {
         } else {
             backClosureforSuccess?(selectedImage)
         }
-        dismiss(animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
+        navigationController?.toolbar.isHidden = false
     }
 
     @objc func clickButton() {
@@ -170,13 +145,13 @@ class SelectViewController: UIViewController {
         showActionSheet()
     }
 
-    func showActionSheet() {
+    @objc func showActionSheet() {
         let alertController = UIAlertController(title: "文件夹", message: .none, preferredStyle: .actionSheet)
         let action = UIAlertAction(title: "最近项目", style: .default, handler: { _ in
             if self.indexNow != 0 {
                 self.indexNow = 0
                 self.collectionView.reloadData()
-                self.titleLabel.text = "最近项目>"
+                self.titlebButton.setTitle("最近项目", for: .normal)
             }
 
         })
@@ -186,7 +161,7 @@ class SelectViewController: UIViewController {
                 if self.indexNow != i+1 {
                     self.indexNow = i+1
                     self.collectionView.reloadData()
-                    self.titleLabel.text = self.topLevelUserCollections.object(at: i).localizedTitle ?? ""+">"
+                    self.titlebButton.setTitle(self.topLevelUserCollections.object(at: i).localizedTitle, for: .normal)
                 }
             })
             alertController.addAction(action)
@@ -243,27 +218,29 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
         cropViewController.backClosure1 = { (image: UIImage) in
             self.newImage = image
             cell.imageView.image = image
+            // cell.click()
         }
-        cropViewController.backClosure2 = { (success: Int) in
-            self.success = success
-        }
-        present(cropViewController, animated: true, completion: nil)
+        navigationController?.pushViewController(cropViewController, animated: true)
+        navigationController?.toolbar.isHidden = false
+        navigationController?.toolbar.tintColor = .white
+        navigationController?.toolbar.barTintColor = .black
+        navigationController?.navigationBar.isHidden = true
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if indexNow == 0 {
-            if allAssets.count==0 {
-                self.label.isHidden=false
+            if allAssets.count == 0 {
+                label.isHidden = false
             } else {
-                self.label.isHidden=true
+                label.isHidden = true
             }
             return allAssets.count
         } else {
             let assetsFetchResults: PHFetchResult = PHAsset.fetchAssets(in: topLevelUserCollections.object(at: indexNow-1) as! PHAssetCollection, options: nil)
-            if assetsFetchResults.count==0 {
-                self.label.isHidden=false
+            if assetsFetchResults.count == 0 {
+                label.isHidden = false
             } else {
-                self.label.isHidden=true
+                label.isHidden = true
             }
             return assetsFetchResults.count
         }
@@ -316,10 +293,9 @@ extension SelectViewController: PHPhotoLibraryChangeObserver {
             self.selectedImage.removeAll()
             self.flags.removeAll()
             if PHPhotoLibrary.authorizationStatus(for: .readWrite) == .authorized {
-                self.moreButton.isHidden = true
-                self.label.isHidden=true
+                self.navigationController?.toolbar.isHidden = true
             } else {
-                self.moreButton.isHidden = false
+                self.navigationController?.toolbar.isHidden = false
             }
         }
     }

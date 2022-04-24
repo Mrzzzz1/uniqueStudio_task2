@@ -12,13 +12,12 @@ class CropViewController: UIViewController {
     var lowView = UIView()
     var image: UIImage!
     var backClosure1: ((UIImage)->Void)?
-    var backClosure2: ((Int)->Void)?
     var color1 = UIColor(red: 0, green: 0, blue: 0, alpha: 0.8)
     var color2 = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2)
     var imageView = UIImageView()
     var newImage = UIImage()
     var cropRectView = UIScrollView()
-    
+
     override func viewDidLoad() {
         view.backgroundColor = .black
     }
@@ -26,7 +25,7 @@ class CropViewController: UIViewController {
     func setUp(image: UIImage) {
         self.image = image
         // 裁剪框
-        
+
         view.addSubview(cropRectView)
         cropRectView.frame.origin = CGPoint(x: 0, y: (view.frame.height-view.frame.width)/2)
         cropRectView.frame.size = CGSize(width: view.frame.width, height: view.frame.width)
@@ -35,9 +34,9 @@ class CropViewController: UIViewController {
         cropRectView.minimumZoomScale = 1
         cropRectView.addSubview(imageView)
         cropRectView.delegate = self
-        
+
         drawBorderLayer()
-        
+
         imageView.image = image
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.leadingAnchor.constraint(equalTo: cropRectView.leadingAnchor).isActive = true
@@ -56,48 +55,51 @@ class CropViewController: UIViewController {
             cropRectView.contentSize = CGSize(width: view.frame.width, height: view.frame.width*image.size.height/image.size.width)
             cropRectView.contentOffset.y = (view.frame.width*image.size.height/image.size.width-cropRectView.frame.width)/2
         }
-        
+
         upView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: (view.frame.height-view.frame.width)/2))
         upView.backgroundColor = color1
         lowView = UIView(frame: CGRect(x: 0, y: (view.frame.height + view.frame.width)/2, width: view.frame.width, height: (view.frame.height-view.frame.width)/2))
         lowView.backgroundColor = color1
         view.addSubview(upView)
         view.addSubview(lowView)
-        
+
         setUpButton()
     }
-    
+
     func setUpButton() {
-        let cancelButton = UIButton(frame: CGRect(x: 50, y: view.frame.height-100, width: 100, height: 50))
-        cancelButton.setTitle("取消", for: .normal)
-        cancelButton.setTitleColor(.white, for: .normal)
-        cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
-        view.addSubview(cancelButton)
-        let doneButton = UIButton(frame: CGRect(x: view.frame.width-150, y: view.frame.height-100, width: 100, height: 50))
-        doneButton.setTitle("确认", for: .normal)
-        doneButton.setTitleColor(.white, for: .normal)
-        doneButton.addTarget(self, action: #selector(done), for: .touchUpInside)
-        view.addSubview(doneButton)
+        navigationController?.navigationBar.tintColor = .white
+        navigationController?.toolbar.tintColor = .white
+        navigationController?.navigationBar.barTintColor = .black
+        navigationController?.toolbar.barTintColor = .black
+        navigationController?.navigationItem.hidesBackButton = true
+        navigationController?.toolbar.isHidden = false
+        let cancelButton = UIBarButtonItem(title: "取消", style: .done, target: self, action: #selector(cancel))
+        let doneButton = UIBarButtonItem(title: "确认", style: .done, target: self, action: #selector(done))
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: "barButtonItemClicked:", action: nil)
+        setToolbarItems([cancelButton, flexibleSpace, doneButton], animated: true)
     }
 
     @objc func cancel() {
-        backClosure2?(-1)
-        dismiss(animated: true, completion: nil)
+        navigationController?.toolbar.barTintColor = .white
+        navigationController?.toolbar.tintColor = .black
+        navigationController?.navigationBar.isHidden = false
+        navigationController?.popViewController(animated: false)
     }
 
     @objc func done() {
         cropImage()
-        backClosure2?(1)
         backClosure1?(newImage)
-        
-        dismiss(animated: true, completion: nil)
+        navigationController?.toolbar.barTintColor = .white
+        navigationController?.toolbar.tintColor = .black
+        navigationController?.navigationBar.isHidden = false
+        navigationController?.popViewController(animated: false)
     }
-    
+
     // 画边框
     func drawBorderLayer() {
         let borderLayer = CAShapeLayer()
         borderLayer.bounds = cropRectView.bounds
-                
+
         borderLayer.position = view.layer.position
         borderLayer.path = UIBezierPath(roundedRect: borderLayer.bounds, cornerRadius: 2).cgPath
         borderLayer.lineWidth = 5/UIScreen.main.scale

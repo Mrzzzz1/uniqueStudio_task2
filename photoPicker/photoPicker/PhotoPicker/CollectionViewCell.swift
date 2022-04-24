@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 protocol CollectionViewCellDelegate {
-    func addSelectedImage(image: UIImage, tag: Int)->Bool
+    func addSelectedImage(image: UIImage, tag: Int) -> Bool
     func crop(image: UIImage, index: Int)
     func removeSelectedImage(tag: Int)
 }
@@ -54,7 +54,7 @@ class CollectionViewCell: UICollectionViewCell {
             delegate?.removeSelectedImage(tag: tag)
             flag = false
         } else {
-            if((delegate!.addSelectedImage(image: imageView.image!, tag: tag)) ) {
+            if delegate!.addSelectedImage(image: imageView.image!, tag: tag) {
                 sellectButton.setTitleColor(.blue, for: .normal)
                 flag = true
             }
