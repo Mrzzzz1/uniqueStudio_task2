@@ -11,6 +11,7 @@ protocol CollectionViewCellDelegate {
     func addSelectedImage(image: UIImage, tag: Int) -> Bool
     func crop(image: UIImage, index: Int)
     func removeSelectedImage(tag: Int)
+    var flags: [Int] {get}
 }
 
 class CollectionViewCell: UICollectionViewCell {
@@ -22,20 +23,22 @@ class CollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
-
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func config(image: UIImage) {
-        imageView.image = image
+    func config(image: UIImage){
+        imageView.image=image
+        config1()
+    }
+    func config1() {
+        //imageView.image = image
         addSubview(imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         imageView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         imageView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
-        print(heightAnchor)
         imageView.heightAnchor.constraint(equalTo: heightAnchor).isActive = true
         addSubview(sellectButton)
         sellectButton.translatesAutoresizingMaskIntoConstraints = false
@@ -43,8 +46,18 @@ class CollectionViewCell: UICollectionViewCell {
         sellectButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 3).isActive = true
         sellectButton.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.2).isActive = true
         sellectButton.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.2).isActive = true
-        sellectButton.setTitle("√", for: .normal)
         sellectButton.setTitleColor(.white, for: .normal)
+        sellectButton.setTitle("√", for: .normal)
+        if let delegate = delegate {
+            for i in 0..<delegate.flags.count{
+                if tag==delegate.flags[i]{
+                    sellectButton.setTitleColor(.blue, for: .normal)
+                    flag=true
+                    
+                }
+            }
+        }
+        print(tag," ",flag)
         sellectButton.addTarget(self, action: #selector(click), for: .touchUpInside)
     }
 

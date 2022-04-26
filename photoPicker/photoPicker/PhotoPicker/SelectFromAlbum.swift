@@ -15,6 +15,7 @@ protocol SelectViewControllerDelegate {
 }
 
 class SelectViewController: UIViewController {
+    //let doneButton=UIBarButtonItem(title: "确认", style: .done, target: self, action: #selector(done))
     var delegate: SelectViewControllerDelegate?
     var titlebButton = UIButton()
     var backClosureforSuccess: (([UIImage]) -> Void)?
@@ -112,7 +113,10 @@ class SelectViewController: UIViewController {
         titlebButton.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.1)
         titlebButton.layer.cornerRadius = 16
         navigationItem.titleView = titlebButton
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "确认", style: .done, target: self, action: #selector(done))
+        let doneButton=UIBarButtonItem(title: "确认", style: .done, target: self, action: #selector(done))
+        navigationItem.rightBarButtonItem=doneButton
+        doneButton.isEnabled=false
+        doneButton.tintColor=UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         if let delegate = delegate {
             if delegate.chooseOnlyOne == true {
                 navigationItem.rightBarButtonItem?.title = ""
@@ -131,11 +135,7 @@ class SelectViewController: UIViewController {
     }
 
     @objc func done() {
-        if selectedImage.isEmpty {
-            backClosureForFail?(StopReason.chooseNoPhoto)
-        } else {
             backClosureforSuccess?(selectedImage)
-        }
         navigationController?.popViewController(animated: true)
         navigationController?.toolbar.isHidden = false
     }
@@ -185,6 +185,8 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 }
             } else {
                 if delegate.judge(image: image) {
+                    navigationItem.rightBarButtonItem?.isEnabled=true
+                    navigationItem.rightBarButtonItem?.tintColor=UIColor(red: 0, green: 0, blue: 0, alpha: 1)
                     selectedImage.append(image)
                     flags.append(tag)
                     return true
@@ -194,6 +196,8 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 }
             }
         } else {
+            navigationItem.rightBarButtonItem?.isEnabled=true
+            navigationItem.rightBarButtonItem?.tintColor=UIColor(red: 0, green: 0, blue: 0, alpha: 1)
             selectedImage.append(image)
             flags.append(tag)
             return true
@@ -207,6 +211,10 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 flags.remove(at: i)
                 break
             }
+        }
+        if(selectedImage.isEmpty) {
+            navigationItem.rightBarButtonItem?.isEnabled=false
+            navigationItem.rightBarButtonItem?.tintColor=UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         }
     }
 
@@ -249,7 +257,16 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "itemed", for: indexPath) as! CollectionViewCell
         let imageManager = PHCachingImageManager()
-        if indexNow == 0 {
+          if indexNow == 0 {
+//            imageManager.requestImageDataAndOrientation(for: allAssets[indexPath.item], options: nil, resultHandler: {Date,_,_,_  in
+//                if let Date = Date {
+//                    if  let image=UIImage(data: Date){
+//                        cell.config(image: image)
+//                        cell.delegate = self
+//                        cell.tag = self.indexNow*10+indexPath.item
+//                    }
+//                }
+//            })
             imageManager.requestImage(
                 for: allAssets[indexPath.item],
                 targetSize: PHImageManagerMaximumSize,
@@ -258,6 +275,7 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 resultHandler: { result, _ in
                     if let im = result {
                         cell.config(image: im)
+                        cell.backgroundColor = .red
                         cell.delegate = self
                         cell.tag = self.indexNow*10+indexPath.item
                     }
@@ -271,9 +289,9 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 options: nil,
                 resultHandler: { result, _ in
                     if let im = result {
+                        cell.tag = self.indexNow*10+indexPath.item
                         cell.config(image: im)
                         cell.delegate = self
-                        cell.tag = self.indexNow*10+indexPath.item
                     }
                 })
         }
