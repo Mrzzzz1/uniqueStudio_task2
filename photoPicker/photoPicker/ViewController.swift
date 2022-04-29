@@ -9,7 +9,7 @@ import UIKit
 class ViewController: UIViewController {
     //是否只需要一张图片
     var chooseOnlyOne=false
-//    let button = UIButton(frame: CGRect(x: 50, y: 50, width: 100, height: 50))
+    //var chooseOnlyOne=true
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,15 +19,6 @@ class ViewController: UIViewController {
         //setUpButton()
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "选择图片", style: .done, target: self, action: #selector(selectpt))
     }
-
-//    func setUpButton() {
-//
-//        view.addSubview(button)
-//        button.setTitle("选择图片", for: .normal)
-//
-//        button.setTitleColor(.black, for: .normal)
-//        button.addTarget(self, action: #selector(selectpt), for: .touchUpInside)
-//    }
     
     @objc func selectpt() {
         let choosewayController=ChooseWayController()
@@ -37,10 +28,8 @@ class ViewController: UIViewController {
         }
         choosewayController.backClosureForFail = { (reason:StopReason) in
             print("未获得图片原因：\(reason)")
-            
         }
         navigationController?.pushViewController(choosewayController, animated: true)
-       // present(choosewayController, animated: true, completion: nil)
     }
 
 }

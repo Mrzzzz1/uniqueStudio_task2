@@ -25,7 +25,6 @@ class CropViewController: UIViewController {
     func setUp(image: UIImage) {
         self.image = image
         // 裁剪框
-
         view.addSubview(cropRectView)
         cropRectView.frame.origin = CGPoint(x: 0, y: (view.frame.height-view.frame.width)/2)
         cropRectView.frame.size = CGSize(width: view.frame.width, height: view.frame.width)
@@ -196,10 +195,8 @@ extension UIImage {
         default:
             ctx?.draw(cgImage!, in: CGRect(x: CGFloat(0), y: CGFloat(0), width: CGFloat(size.width), height: CGFloat(size.height)))
         }
-
         let cgimg: CGImage = (ctx?.makeImage())!
         let img = UIImage(cgImage: cgimg)
-
         return img
     }
 }

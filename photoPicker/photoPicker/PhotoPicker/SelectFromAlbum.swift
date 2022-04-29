@@ -15,7 +15,6 @@ protocol SelectViewControllerDelegate {
 }
 
 class SelectViewController: UIViewController {
-    //let doneButton=UIBarButtonItem(title: "确认", style: .done, target: self, action: #selector(done))
     var delegate: SelectViewControllerDelegate?
     var titlebButton = UIButton()
     var backClosureforSuccess: (([UIImage]) -> Void)?
@@ -57,7 +56,8 @@ class SelectViewController: UIViewController {
                 case .authorized:
                     print("全部")
                 default:
-                    self.dismiss(animated: true, completion: nil)
+                    //self.dismiss(animated: true, completion: nil)
+                    self.navigationController?.popToRootViewController(animated: true)
                     self.backClosureForFail?(StopReason.noAlbum)
                 }
             }
@@ -113,10 +113,10 @@ class SelectViewController: UIViewController {
         titlebButton.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.1)
         titlebButton.layer.cornerRadius = 16
         navigationItem.titleView = titlebButton
-        let doneButton=UIBarButtonItem(title: "确认", style: .done, target: self, action: #selector(done))
-        navigationItem.rightBarButtonItem=doneButton
-        doneButton.isEnabled=false
-        doneButton.tintColor=UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        let doneButton = UIBarButtonItem(title: "确认", style: .done, target: self, action: #selector(done))
+        navigationItem.rightBarButtonItem = doneButton
+        doneButton.isEnabled = false
+        doneButton.tintColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         if let delegate = delegate {
             if delegate.chooseOnlyOne == true {
                 navigationItem.rightBarButtonItem?.title = ""
@@ -135,7 +135,7 @@ class SelectViewController: UIViewController {
     }
 
     @objc func done() {
-            backClosureforSuccess?(selectedImage)
+        backClosureforSuccess?(selectedImage)
         navigationController?.popViewController(animated: true)
         navigationController?.toolbar.isHidden = false
     }
@@ -153,7 +153,6 @@ class SelectViewController: UIViewController {
                 self.collectionView.reloadData()
                 self.titlebButton.setTitle("最近项目", for: .normal)
             }
-
         })
         alertController.addAction(action)
         for i in 0..<topLevelUserCollections.count {
@@ -185,8 +184,8 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 }
             } else {
                 if delegate.judge(image: image) {
-                    navigationItem.rightBarButtonItem?.isEnabled=true
-                    navigationItem.rightBarButtonItem?.tintColor=UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+                    navigationItem.rightBarButtonItem?.isEnabled = true
+                    navigationItem.rightBarButtonItem?.tintColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
                     selectedImage.append(image)
                     flags.append(tag)
                     return true
@@ -196,8 +195,8 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 }
             }
         } else {
-            navigationItem.rightBarButtonItem?.isEnabled=true
-            navigationItem.rightBarButtonItem?.tintColor=UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+            navigationItem.rightBarButtonItem?.isEnabled = true
+            navigationItem.rightBarButtonItem?.tintColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
             selectedImage.append(image)
             flags.append(tag)
             return true
@@ -212,9 +211,9 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 break
             }
         }
-        if(selectedImage.isEmpty) {
-            navigationItem.rightBarButtonItem?.isEnabled=false
-            navigationItem.rightBarButtonItem?.tintColor=UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        if selectedImage.isEmpty {
+            navigationItem.rightBarButtonItem?.isEnabled = false
+            navigationItem.rightBarButtonItem?.tintColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         }
     }
 
@@ -257,7 +256,7 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "itemed", for: indexPath) as! CollectionViewCell
         let imageManager = PHCachingImageManager()
-          if indexNow == 0 {
+        if indexNow == 0 {
 //            imageManager.requestImageDataAndOrientation(for: allAssets[indexPath.item], options: nil, resultHandler: {Date,_,_,_  in
 //                if let Date = Date {
 //                    if  let image=UIImage(data: Date){
@@ -309,6 +308,8 @@ extension SelectViewController: PHPhotoLibraryChangeObserver {
         DispatchQueue.main.async {
             self.collectionView.reloadData()
             self.selectedImage.removeAll()
+            self.navigationItem.rightBarButtonItem?.isEnabled = false
+            self.navigationItem.rightBarButtonItem?.tintColor = UIColor(white: 0, alpha: 0.5)
             self.flags.removeAll()
             if PHPhotoLibrary.authorizationStatus(for: .readWrite) == .authorized {
                 self.navigationController?.toolbar.isHidden = true

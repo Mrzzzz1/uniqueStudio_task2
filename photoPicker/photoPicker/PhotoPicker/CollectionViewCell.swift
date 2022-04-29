@@ -33,7 +33,6 @@ class CollectionViewCell: UICollectionViewCell {
         config1()
     }
     func config1() {
-        //imageView.image = image
         addSubview(imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.topAnchor.constraint(equalTo: topAnchor).isActive = true
@@ -53,14 +52,12 @@ class CollectionViewCell: UICollectionViewCell {
                 if tag==delegate.flags[i]{
                     sellectButton.setTitleColor(.blue, for: .normal)
                     flag=true
-                    
                 }
             }
         }
-        print(tag," ",flag)
         sellectButton.addTarget(self, action: #selector(click), for: .touchUpInside)
     }
-
+    
     @objc func click() {
         if flag {
             sellectButton.setTitleColor(.white, for: .normal)

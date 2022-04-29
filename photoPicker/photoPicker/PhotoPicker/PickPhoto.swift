@@ -75,8 +75,8 @@ class ChooseWayController: UIViewController {
     func setUpButton() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "取消", style: .done, target: self, action: #selector(cancel))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "确认", style: .done, target: self, action: #selector(done))
-        navigationItem.rightBarButtonItem?.isEnabled=false
-        navigationItem.rightBarButtonItem?.tintColor=UIColor(white: 0, alpha: 0.5)
+        navigationItem.rightBarButtonItem?.isEnabled = false
+        navigationItem.rightBarButtonItem?.tintColor = UIColor(white: 0, alpha: 0.5)
         let moreButton = UIBarButtonItem(title: "1", style: .done, target: self, action: #selector(getMorePhotos))
         if let delegate = delegate {
             if delegate.chooseOnlyOne {
@@ -160,7 +160,7 @@ class ChooseWayController: UIViewController {
         }
         selectViewController.backClosureforSuccess = { (images: [UIImage]) in self.label.isHidden = true
             self.navigationItem.rightBarButtonItem?.tintColor = .black
-            self.navigationItem.rightBarButtonItem?.isEnabled=true
+            self.navigationItem.rightBarButtonItem?.isEnabled = true
             if let delegate = self.delegate {
                 if delegate.chooseOnlyOne {
                     self.onlyOneImage = images[0]
@@ -230,8 +230,8 @@ extension ChooseWayController: UICollectionViewDelegate, UICollectionViewDataSou
         collectionView.reloadData()
         if selectedImages.isEmpty {
             label.isHidden = false
-            navigationItem.rightBarButtonItem?.isEnabled=false
-            navigationItem.rightBarButtonItem?.tintColor=UIColor(white: 0, alpha: 0.5)
+            navigationItem.rightBarButtonItem?.isEnabled = false
+            navigationItem.rightBarButtonItem?.tintColor = UIColor(white: 0, alpha: 0.5)
         }
     }
 
