@@ -40,6 +40,13 @@ class SelectViewController: UIViewController {
         let leftButton = UIBarButtonItem(title: "取消", style: .plain, target: self, action: #selector(cancel))
         navigationItem.leftBarButtonItem = leftButton
     }
+    override func viewDidAppear(_ animated: Bool) {
+        if PHPhotoLibrary.authorizationStatus(for: .readWrite) == .authorized {
+            self.navigationController?.toolbar.isHidden = true
+        } else {
+            self.navigationController?.toolbar.isHidden = false
+        }
+    }
 
     deinit {
         PHPhotoLibrary.shared().unregisterChangeObserver(self)
@@ -228,9 +235,9 @@ extension SelectViewController: UICollectionViewDelegate, UICollectionViewDataSo
             // cell.click()
         }
         navigationController?.pushViewController(cropViewController, animated: true)
-        navigationController?.toolbar.isHidden = false
         navigationController?.toolbar.tintColor = .white
         navigationController?.toolbar.barTintColor = .black
+        navigationController?.toolbar.isHidden = false
         navigationController?.navigationBar.isHidden = true
     }
 
