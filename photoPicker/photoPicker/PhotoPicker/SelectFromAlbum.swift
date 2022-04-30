@@ -89,6 +89,7 @@ class SelectViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = 3
         layout.itemSize = CGSize(width: view.frame.width/3.05, height: view.frame.width/3)
         collectionView = UICollectionView(frame: CGRect(x: 0, y: 120, width: view.frame.width, height: view.frame.height-220), collectionViewLayout: layout)
         view.addSubview(collectionView)
